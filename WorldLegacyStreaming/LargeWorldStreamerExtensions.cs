@@ -10,43 +10,49 @@ namespace Terraforming.WorldLegacyStreaming
 {
     static class LargeWorldStreamerExtensions
     {
-		public static void PerformOctreesEdit(this LargeWorldStreamer largeWorldStreamer, Int3.Bounds blockBounds, LargeWorldStreamer.DistanceField df, bool isAdd = false, byte type = 1)
+		public static void AddToOctreesEdit(this LargeWorldStreamer largeWorldStreamer, Int3.Bounds localBlockBounds, LargeWorldStreamer.DistanceField df, bool isAdd = false, byte type = 1)
 		{
-			VoxelandData.OctNode.BlendArgs args = new VoxelandData.OctNode.BlendArgs(isAdd ? VoxelandData.OctNode.BlendOp.Union : VoxelandData.OctNode.BlendOp.Subtraction, false, isAdd ? type : (byte)0);
+			localBlockBounds = localBlockBounds.Expanded(1);
+			var octreesEditData = new OctreesEditData(localBlockBounds, isAdd, type, df);
+
+			largeWorldStreamer.PerformOctreesEditThreaded(octreesEditData);
+		}
+
+		public static void PerformOctreesEditThreaded(this LargeWorldStreamer largeWorldStreamer, OctreesEditData octreesEditData)
+		{
 			var streamerV2 = largeWorldStreamer.streamerV2;
 
-			blockBounds = blockBounds.Expanded(1);
-			foreach (Int3 @int in blockBounds / largeWorldStreamer.blocksPerTree)
+			foreach (Int3 octreeId in octreesEditData.localBlockBounds / largeWorldStreamer.blocksPerTree)
 			{
-				if (largeWorldStreamer.CheckRoot(@int))
+				if (largeWorldStreamer.CheckRoot(octreeId))
 				{
-					Octree octree = streamerV2.octreesStreamer.GetOctree(@int);
+					Octree octree = streamerV2.octreesStreamer.GetOctree(octreeId);
 					if (octree != null)
 					{
-						Int3.Bounds bounds = @int.Refined(largeWorldStreamer.blocksPerTree);
-						VoxelandData.OctNode root = octree.ToVLOctree();
-						foreach (Int3 int2 in bounds.Intersect(blockBounds))
+						Int3.Bounds bounds = octreeId.Refined(largeWorldStreamer.blocksPerTree);
+						VoxelandData.OctNode rootNode = octree.ToVLOctree();
+						foreach (Int3 int2 in bounds.Intersect(octreesEditData.localBlockBounds))
 						{
-							Vector3 wsPos = largeWorldStreamer.land.transform.TransformPoint(int2 + UWE.Utils.half3);
-							float num = df(wsPos);
-							VoxelandData.OctNode i = new VoxelandData.OctNode((num >= 0f) ? type : (byte)0, VoxelandData.OctNode.EncodeDensity(num));
+							Vector3 wsPos = octreesEditData.localToWorldMatrix.MultiplyPoint3x4(int2 + UWE.Utils.half3);
+							float num = octreesEditData.df(wsPos);
+							VoxelandData.OctNode i = new VoxelandData.OctNode((num >= 0f) ? octreesEditData.type : (byte)0, VoxelandData.OctNode.EncodeDensity(num));
 							int blocksPerTree = largeWorldStreamer.blocksPerTree;
 							int x = int2.x % blocksPerTree;
 							int y = int2.y % blocksPerTree;
 							int z = int2.z % blocksPerTree;
-							VoxelandData.OctNode octNode = VoxelandData.OctNode.Blend(root.GetNode(x, y, z, blocksPerTree / 2), i, args);
-							root.SetNode(x, y, z, blocksPerTree / 2, octNode.type, octNode.density);
+							VoxelandData.OctNode octNode = VoxelandData.OctNode.Blend(rootNode.GetNode(x, y, z, blocksPerTree / 2), i, octreesEditData.blendArgs);
+							rootNode.SetNode(x, y, z, blocksPerTree / 2, octNode.type, octNode.density);
 						}
-						root.Collapse();
+						rootNode.Collapse();
 
-						streamerV2.octreesStreamer.SetBatchOctree(@int, root);
+						streamerV2.octreesStreamer.SetBatchOctree(octreeId, rootNode);
 
-						root.Clear();
+						rootNode.Clear();
 					}
 				}
 			}
 
-			streamerV2.clipmapStreamer.AddToRangesEdited(blockBounds);
+			streamerV2.clipmapStreamer.AddToRangesEdited(octreesEditData.localBlockBounds);
 		}
 	}
 }

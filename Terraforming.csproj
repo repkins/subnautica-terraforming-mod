@@ -89,6 +89,7 @@
     <Compile Include="MainPatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SaveLoad\SaveLoadManagerPatches\SaveToTemporaryStorageAsyncPatch.cs" />
+    <Compile Include="WorldLegacyStreaming\OctreesEditData.cs" />
     <Compile Include="WorldStreaming\BatchOctreesExtensions.cs" />
     <Compile Include="WorldStreaming\BatchOctreesPatches\BeginUnloadingPatch.cs" />
     <Compile Include="WorldStreaming\BatchOctreesStreamerExtensions.cs" />

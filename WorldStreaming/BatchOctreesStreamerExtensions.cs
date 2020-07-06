@@ -13,6 +13,8 @@ namespace Terraforming.WorldStreaming
         private static readonly FieldInfo batchesField = typeof(BatchOctreesStreamer).GetField("batches", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         private static readonly FieldInfo numOctreesPerBatchField = typeof(BatchOctreesStreamer).GetField("numOctreesPerBatch", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
+        private static List<Int3.Bounds> rangesToEdit = new List<Int3.Bounds>();
+
         public static string GetTmpPath(this BatchOctreesStreamer batchOctreesStreamer, Int3 batchId)
         {
             var tmpPathPrefix = Path.Combine(LargeWorldStreamer.main.tmpPathPrefix, "CompiledOctreesCache");

@@ -14,7 +14,7 @@ namespace Terraforming.WorldLegacyStreaming.LargeWorldStreamerPatches
     {
         static bool Prefix(LargeWorldStreamer __instance, Int3.Bounds blockBounds, LargeWorldStreamer.DistanceField df, bool isAdd = false, byte type = 1)
         {
-            __instance.PerformOctreesEdit(blockBounds, df, isAdd, type);
+            __instance.AddToOctreesEdit(blockBounds, df, isAdd, type);
 
             return false;
         }
