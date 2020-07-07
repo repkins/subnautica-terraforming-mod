@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Terraforming.WorldStreaming;
 using UnityEngine;
 
 namespace Terraforming.WorldLegacyStreaming.LargeWorldStreamerPatches
@@ -14,7 +15,7 @@ namespace Terraforming.WorldLegacyStreaming.LargeWorldStreamerPatches
     {
         static bool Prefix(LargeWorldStreamer __instance, Int3.Bounds blockBounds, LargeWorldStreamer.DistanceField df, bool isAdd = false, byte type = 1)
         {
-            __instance.AddToOctreesEdit(blockBounds, df, isAdd, type);
+            __instance.streamerV2.AddToWorldEdit(blockBounds, df, isAdd, type);
 
             return false;
         }
