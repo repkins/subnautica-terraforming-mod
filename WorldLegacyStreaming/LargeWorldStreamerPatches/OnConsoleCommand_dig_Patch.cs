@@ -11,10 +11,20 @@ namespace Terraforming.WorldLegacyStreaming.LargeWorldStreamerPatches
     [HarmonyPatch("OnConsoleCommand_dig")]
     static class OnConsoleCommand_dig_Patch
     {
+        static bool Prefix()
+        {
+            if (WorldStreamerExtensions.isOctreesEditing || ClipmapLevelExtensions.isMeshesRebuilding)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         static void Postfix()
         {
             var streamerV2 = LargeWorldStreamer.main.streamerV2;
-            streamerV2.clipmapStreamer.FlushRangesEdited(streamerV2.octreesStreamer.minLod, streamerV2.octreesStreamer.maxLod);
+            streamerV2.FlushWorldEdit();
         }
     }
 }

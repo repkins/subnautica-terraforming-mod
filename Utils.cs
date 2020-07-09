@@ -17,7 +17,7 @@ namespace Terraforming
 				LargeWorldStreamer.main.PerformSphereEdit(position, Mathf.Abs(range), range < 0f, 1);
 
 				var streamerV2 = LargeWorldStreamer.main.streamerV2;
-				streamerV2.clipmapStreamer.FlushRangesEdited(streamerV2.octreesStreamer.minLod, streamerV2.octreesStreamer.maxLod);
+				streamerV2.FlushWorldEdit();
 			}
 		}
 	}

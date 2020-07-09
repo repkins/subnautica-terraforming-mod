@@ -57,7 +57,7 @@ namespace Terraforming.WorldStreaming
             }
         }
 
-        public static void PerformOctreesEditThreaded(this BatchOctreesStreamer octreesStreamer, OctreesEditData octreesEditData)
+        public static void PerformOctreesEdit(this BatchOctreesStreamer octreesStreamer, OctreesEditData octreesEditData)
         {
             var blocksPerTree = (int)octreeSizeField.GetValue(octreesStreamer);
             var largeWorldStreamer = LargeWorldStreamer.main;

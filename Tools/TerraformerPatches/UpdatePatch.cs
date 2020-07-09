@@ -16,7 +16,7 @@ namespace Terraforming.Tools.TerraformerPatches
         {
             __state = false;
 
-            if (ClipmapLevelExtensions.isMeshesRebuilding)
+            if (WorldStreamerExtensions.isOctreesEditing || ClipmapLevelExtensions.isMeshesRebuilding)
             {
                 return false;
             }
@@ -53,7 +53,7 @@ namespace Terraforming.Tools.TerraformerPatches
             if (__state)
             {
                 var streamerV2 = LargeWorldStreamer.main.streamerV2;
-                streamerV2.clipmapStreamer.FlushRangesEdited(streamerV2.octreesStreamer.minLod, streamerV2.octreesStreamer.maxLod);
+                streamerV2.FlushWorldEdit();
 
                 var probe = __instance.GetProbe();
                 if (probe)
