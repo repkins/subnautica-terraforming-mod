@@ -12,6 +12,9 @@ namespace Terraforming.WorldStreaming
     {
         private static readonly FieldInfo octreesField = typeof(BatchOctrees).GetField("octrees", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         private static readonly FieldInfo streamerField = typeof(BatchOctrees).GetField("streamer", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        private static readonly FieldInfo stateField = typeof(BatchOctrees).GetField("state", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+        private static readonly Type StateEnum = typeof(BatchOctrees).GetNestedType("State", BindingFlags.Public | BindingFlags.NonPublic);
 
         private static List<BatchOctrees> dirtyBatches = new List<BatchOctrees>();
 
@@ -47,6 +50,17 @@ namespace Terraforming.WorldStreaming
         static public bool GetIsDirty(this BatchOctrees batchOctrees)
         {
             return dirtyBatches.Contains(batchOctrees);
+        }
+
+        static public bool IsLoadedState(this BatchOctrees batchOctrees)
+        {
+            var state = stateField.GetValue(batchOctrees) as Enum;
+            var loadedState = Enum.Parse(StateEnum, "Loaded") as Enum;
+            var queuedForUnloadingState = Enum.Parse(StateEnum, "QueuedForUnloading") as Enum;
+
+            Logger.Debug($"state {state}, loadedState {loadedState}, queuedForUnloadingState {queuedForUnloadingState} => {state.Equals(loadedState) || state.Equals(queuedForUnloadingState)}");
+
+            return state.Equals(loadedState) || state.Equals(queuedForUnloadingState);
         }
     }
 }

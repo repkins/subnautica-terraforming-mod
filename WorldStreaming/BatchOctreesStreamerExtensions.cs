@@ -91,5 +91,26 @@ namespace Terraforming.WorldStreaming
                 }
             }
         }
+
+        public static bool IsRangeLoadedState(this BatchOctreesStreamer octreesStreamer, Int3.Bounds range)
+        {
+            Int3 min = Int3.FloorDiv(range.mins, octreesStreamer.batchSize);
+            Int3 max = Int3.FloorDiv(range.maxs, octreesStreamer.batchSize);
+
+            var isLoaded = true;
+            foreach (Int3 id in Int3.MinMax(min, max))
+            {
+                BatchOctrees batch = octreesStreamer.GetBatch(id);
+
+                Logger.Debug($"batch {id}: {batch}");
+
+                if (batch == null || !batch.IsLoadedState())
+                {
+                    isLoaded = false;
+                }
+            }
+
+            return isLoaded;
+        }
     }
 }

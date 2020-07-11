@@ -51,8 +51,6 @@ namespace Terraforming.WorldStreaming
             clipmapCell.RebuildLayers(meshBuilder, out var clipmapChunk);
 
             clipmapCell.level.OnEndBuildLayers(clipmapCell, clipmapChunk);
-
-            // clipmapCell.SwapChunk(clipmapChunk);
         }
 
         public static void RebuildLayers(this ClipmapCell clipmapCell, MeshBuilder meshBuilder, out ClipmapChunk clipmapChunk)
