@@ -48,6 +48,9 @@ namespace Terraforming.WorldStreaming
 
 		public static void PerformWorldEdit(this WorldStreamer worldStreamer, List<OctreesEditData> octreesEditDatas)
 		{
+			while (worldStreamer.IsIdle())
+			{ }
+
 			if (octreesEditDatas.Any(editData => !worldStreamer.octreesStreamer.IsRangeLoadedState(editData.localBlockBounds)))
 			{
 				Logger.Warning($"Area of {octreesEditDatas.Count} ranges to edit is not entirely loaded, skipping.");

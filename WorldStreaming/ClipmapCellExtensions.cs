@@ -27,7 +27,7 @@ namespace Terraforming.WorldStreaming
             var clipmapCell = (ClipmapCell)owner;
             clipmapCell.RebuildMesh(out var meshBuilder);
 
-            clipmapCell.level.streamer.buildLayersThread.Enqueue(new Task.Function(RebuildLayersTask), clipmapCell, meshBuilder);
+            clipmapCell.level.streamer.streamingThread.Enqueue(new Task.Function(EndRebuildingMeshesTask), clipmapCell, meshBuilder);
         }
 
         public static void RebuildMesh(this ClipmapCell clipmapCell, out MeshBuilder meshBuilder)
@@ -42,6 +42,14 @@ namespace Terraforming.WorldStreaming
             meshBuilder.DoThreadablePart(octreesStreamer, clipmapStreamer.settings.collision);
 
             Logger.Debug($"{clipmapCell}: End");
+        }
+
+        public static void EndRebuildingMeshesTask(object owner, object state)
+        {
+            var clipmapCell = (ClipmapCell)owner;
+            var meshBuilder = (MeshBuilder)state;
+
+            clipmapCell.level.streamer.buildLayersThread.Enqueue(new Task.Function(RebuildLayersTask), clipmapCell, meshBuilder);
         }
 
         private static void RebuildLayersTask(object owner, object state)
@@ -90,6 +98,18 @@ namespace Terraforming.WorldStreaming
             Logger.Debug($"clipmapCellState {clipmapCellState}, visibleState {visibleState} => {clipmapCellState.Equals(visibleState)}");
 
             return clipmapCellState.Equals(visibleState);
+        }
+
+        public static bool IsLoadedState(this ClipmapCell clipmapCell)
+        {
+            var state = stateField.GetValue(clipmapCell) as Enum;
+
+            var loadedState = Enum.Parse(StateEnum, "Loaded") as Enum;
+            var visibleState = Enum.Parse(StateEnum, "Visible") as Enum;
+            var hiddenByParentState = Enum.Parse(StateEnum, "HiddenByParent") as Enum;
+            var hiddenByChildrenState = Enum.Parse(StateEnum, "HiddenByChildren") as Enum;
+
+            throw new NotImplementedException("IsLoadedState() is not fully implemented");
         }
     }
 }

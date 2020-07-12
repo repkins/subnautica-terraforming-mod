@@ -56,11 +56,10 @@ namespace Terraforming.WorldStreaming
         {
             var state = stateField.GetValue(batchOctrees) as Enum;
             var loadedState = Enum.Parse(StateEnum, "Loaded") as Enum;
-            var queuedForUnloadingState = Enum.Parse(StateEnum, "QueuedForUnloading") as Enum;
 
-            Logger.Debug($"state {state}, loadedState {loadedState}, queuedForUnloadingState {queuedForUnloadingState} => {state.Equals(loadedState) || state.Equals(queuedForUnloadingState)}");
+            Logger.Debug($"state {state}, loadedState {loadedState} => {state.Equals(loadedState)}");
 
-            return state.Equals(loadedState) || state.Equals(queuedForUnloadingState);
+            return state.Equals(loadedState);
         }
     }
 }
