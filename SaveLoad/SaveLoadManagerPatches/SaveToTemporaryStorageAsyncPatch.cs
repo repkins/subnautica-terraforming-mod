@@ -30,7 +30,7 @@ namespace Terraforming.SaveLoad.SaveLoadManagerPatches
             isSavingProperty.SetValue(saveLoadManager, true, null);
 
             var octreesStreamer = LargeWorldStreamer.main.streamerV2.octreesStreamer;
-            while (!octreesStreamer.IsIdle())
+            while (!octreesStreamer.IsIdle() && WorldStreamerExtensions.isOctreesEditing)
             {
                 yield return null;
             }
