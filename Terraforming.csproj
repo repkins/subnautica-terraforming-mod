@@ -98,6 +98,7 @@
     <Compile Include="WorldStreaming\ClipmapLevelExtensions.cs" />
     <Compile Include="WorldStreaming\ClipmapStreamerExtensions.cs" />
     <Compile Include="WorldStreaming\OctreeExtensions.cs" />
+    <Compile Include="WorldStreaming\OctreePatches\ReadPatch.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

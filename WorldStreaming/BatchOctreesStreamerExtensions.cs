@@ -47,7 +47,7 @@ namespace Terraforming.WorldStreaming
             var batches = batchesField.GetValue(batchOctreesStreamer) as Array3<BatchOctrees>;
             foreach (var batchOctrees in batches)
             {
-                if (batchOctrees != null && batchOctrees.IsLoaded() && batchOctrees.GetIsDirty())
+                if (batchOctrees != null && batchOctrees.IsLoaded() && (batchOctrees.GetIsDirty()))
                 {
                     Logger.Info($"Octrees of batch {batchOctrees.id} is dirty. Writing to temp save data prior saving to save slot.");
                     batchOctrees.WriteOctrees();
