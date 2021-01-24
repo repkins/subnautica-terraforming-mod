@@ -22,23 +22,31 @@ namespace Terraforming.Tools.ConstructableBasePatches
                     __instance.GetComponentsInChildren(true, constructableBoundsList);
 
                     var hasAnyOverlappedObstacles = false;
-                    foreach (var constructableBounds in constructableBoundsList)
+
+                    var orientedBoundsList = constructableBoundsList.Select(constructableBounds => OrientedBounds.ToWorldBounds(constructableBounds.transform, constructableBounds.bounds));
+                    foreach (var orientedBounds in orientedBoundsList)
                     {
-                        OrientedBounds orientedBounds = OrientedBounds.ToWorldBounds(constructableBounds.transform, constructableBounds.bounds);
+                        Logger.Debug($"Checking oriented bounds: {orientedBounds}");
 
                         var overlappedObjects = new List<GameObject>();
                         Builder.GetOverlappedObjects(orientedBounds.position, orientedBounds.rotation, orientedBounds.extents, overlappedObjects);
 
                         if (overlappedObjects.Any((gameObject) => Builder.IsObstacle(gameObject.GetComponent<Collider>())))
                         {
-                            LargeWorldStreamer.main.PerformBoxEdit(new Bounds(orientedBounds.position, orientedBounds.size + new Vector3(1f, 1f, 1f)), orientedBounds.rotation, false, 2);
-                            Logger.Debug($"PerformBoxEdit() called using oriented bounds: {orientedBounds}");
                             hasAnyOverlappedObstacles = true;
+                            break;
                         }
                     }
 
                     if (hasAnyOverlappedObstacles)
                     {
+                        foreach (var orientedBounds in orientedBoundsList)
+                        {
+                            var sizeExpand = Config.Instance.spaceBetweenTerrainHabitantModule;
+                            LargeWorldStreamer.main.PerformBoxEdit(new Bounds(orientedBounds.position, orientedBounds.size + new Vector3(sizeExpand, sizeExpand, sizeExpand)), orientedBounds.rotation, false, 2);
+                            Logger.Debug($"PerformBoxEdit() called using oriented bounds: {orientedBounds}");
+                        }
+
                         var streamerV2 = LargeWorldStreamer.main.streamerV2;
                         streamerV2.clipmapStreamer.FlushRangesEdited(streamerV2.octreesStreamer.minLod, streamerV2.octreesStreamer.maxLod);
                     }

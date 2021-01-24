@@ -51,8 +51,6 @@ namespace Terraforming.WorldStreaming
             clipmapCell.RebuildLayers(meshBuilder, out var clipmapChunk);
 
             clipmapCell.level.OnEndBuildLayers(clipmapCell, clipmapChunk);
-
-            // clipmapCell.SwapChunk(clipmapChunk);
         }
 
         public static void RebuildLayers(this ClipmapCell clipmapCell, MeshBuilder meshBuilder, out ClipmapChunk clipmapChunk)
@@ -76,9 +74,14 @@ namespace Terraforming.WorldStreaming
             }
 
             var oldClipmapChunk = chunkField.GetValue(clipmapCell) as ClipmapChunk;
-            if (oldClipmapChunk && oldClipmapChunk.gameObject)
+            if (oldClipmapChunk)
             {
-                UnityEngine.Object.Destroy(oldClipmapChunk.gameObject);
+                MeshBuilder.DestroyMeshes(oldClipmapChunk);
+
+                if (oldClipmapChunk.gameObject)
+                {
+                    UnityEngine.Object.Destroy(oldClipmapChunk.gameObject);
+                }
             }
 
             chunkField.SetValue(clipmapCell, clipmapChunk);
