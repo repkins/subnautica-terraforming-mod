@@ -89,6 +89,7 @@
     <Compile Include="Utils.cs" />
     <Compile Include="WorldLegacyStreaming\LargeWorldStreamerExtensions.cs" />
     <Compile Include="WorldLegacyStreaming\LargeWorldStreamerPatches\OnConsoleCommand_dig_Patch.cs" />
+    <Compile Include="WorldLegacyStreaming\LargeWorldStreamerPatches\PerformBoxEditPatch.cs" />
     <Compile Include="WorldLegacyStreaming\LargeWorldStreamerPatches\PerformVoxelEditPatch.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MainPatcher.cs" />
