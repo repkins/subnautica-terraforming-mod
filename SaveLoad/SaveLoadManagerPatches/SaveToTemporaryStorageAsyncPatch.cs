@@ -15,8 +15,6 @@ namespace Terraforming.SaveLoad.SaveLoadManagerPatches
     [HarmonyPatch(new Type[] { typeof(IOut<SaveLoadManager.SaveResult>), typeof(Texture2D) })]
     static class SaveToTemporaryStorageAsyncPatch
     {
-        private static PropertyInfo isSavingProperty = typeof(SaveLoadManager).GetProperty("isSaving", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
         static void Postfix(SaveLoadManager __instance, ref IEnumerator __result)
         {
             __result = PostfixAsync(__instance, __result);
@@ -27,7 +25,7 @@ namespace Terraforming.SaveLoad.SaveLoadManagerPatches
             yield return originalResult;
 
             LargeWorldStreamer.main.frozen = true;
-            isSavingProperty.SetValue(saveLoadManager, true, null);
+            saveLoadManager.isSaving = true;
 
             var octreesStreamer = LargeWorldStreamer.main.streamerV2.octreesStreamer;
             while (!octreesStreamer.IsIdle())
@@ -37,7 +35,7 @@ namespace Terraforming.SaveLoad.SaveLoadManagerPatches
             octreesStreamer.WriteBatchOctrees();
 
             LargeWorldStreamer.main.frozen = false;
-            isSavingProperty.SetValue(saveLoadManager, false, null);
+            saveLoadManager.isSaving = false;
 
             yield break;
         }

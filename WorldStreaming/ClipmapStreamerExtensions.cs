@@ -10,8 +10,6 @@ namespace Terraforming.WorldStreaming
 {
     static class ClipmapStreamerExtensions
     {
-		private static readonly FieldInfo levelsField = typeof(ClipmapStreamer).GetField("levels", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
 		private static List<Int3.Bounds> rangesEdited = new List<Int3.Bounds>();
 
 		public static void AddToRangesEdited(this ClipmapStreamer clipmapStreamer, Int3.Bounds blockRange)
@@ -32,7 +30,7 @@ namespace Terraforming.WorldStreaming
 
 		private static void OnRangesEdited(this ClipmapStreamer clipmapStreamer, List<Int3.Bounds> blockRanges, int minLod, int maxLod)
 		{
-			var clipmapStreamerLevels = levelsField.GetValue(clipmapStreamer) as ClipmapLevel[];
+			var clipmapStreamerLevels = clipmapStreamer.levels;
 
 			minLod = Mathf.Clamp(minLod, 0, clipmapStreamerLevels.Length - 1);
 			maxLod = Mathf.Clamp(maxLod, 0, clipmapStreamerLevels.Length - 1);

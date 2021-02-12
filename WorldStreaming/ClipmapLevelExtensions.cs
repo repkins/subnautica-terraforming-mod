@@ -12,14 +12,12 @@ namespace Terraforming.WorldStreaming
 {
     static class ClipmapLevelExtensions
     {
-		private static readonly MethodInfo GetCellRangeMethod = typeof(ClipmapLevel).GetMethod("GetCellRange", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
 		private const string rebuildingTerrainMsg = "Rebuilding terrain area...";
 
 		private static Dictionary<int, int> remainingCellCount = new Dictionary<int, int>();
-		private static Dictionary<int, Dictionary<Int3, ClipmapChunk>> clipmapChunks = new Dictionary<int, Dictionary<Int3, ClipmapChunk>>();
+		private static Dictionary<int, Dictionary<Int3, ClipmapChunk>> nullableClipmapChunks = new Dictionary<int, Dictionary<Int3, ClipmapChunk>>();
 
-		private static object rebuildingMessage = null;
+		private static ErrorMessage._Message rebuildingMessage = null;
 		public static bool isMeshesRebuilding = false;
 
 		public static void OnBatchOctreesEdited(this ClipmapLevel clipmapLevel, List<Int3.Bounds> blockRanges)
@@ -41,12 +39,12 @@ namespace Terraforming.WorldStreaming
 			}
 
 			remainingCellCount[clipmapLevel.id] += processingCells.Count;
-			if (!clipmapChunks.ContainsKey(clipmapLevel.id))
+			if (!nullableClipmapChunks.ContainsKey(clipmapLevel.id))
 			{
-				clipmapChunks[clipmapLevel.id] = new Dictionary<Int3, ClipmapChunk>();
+				nullableClipmapChunks[clipmapLevel.id] = new Dictionary<Int3, ClipmapChunk>();
 			}
 
-			Logger.Info($"{clipmapLevel}: Setting remainingCellCount to {remainingCellCount[clipmapLevel.id]}");
+			Logger.Debug($"{clipmapLevel}: Setting remainingCellCount to {remainingCellCount[clipmapLevel.id]}");
 
 			foreach (var cell in processingCells)
 			{
@@ -54,22 +52,22 @@ namespace Terraforming.WorldStreaming
 			}
 		}
 
-		public static void OnEndBuildLayers(this ClipmapLevel clipmapLevel, ClipmapCell clipmapCell, ClipmapChunk clipmapChunk)
+		public static void OnEndBuildLayers(this ClipmapLevel clipmapLevel, ClipmapCell clipmapCell, ClipmapChunk nullableClipmapChunk)
 		{
-			clipmapChunks[clipmapLevel.id][clipmapCell.id] = clipmapChunk;
+            nullableClipmapChunks[clipmapLevel.id][clipmapCell.id] = nullableClipmapChunk;
 
 			remainingCellCount[clipmapLevel.id]--;
 			Logger.Debug($"Decrementing remainingCellCount to {remainingCellCount[clipmapLevel.id]}");
 
 			if (remainingCellCount[clipmapLevel.id] <= 0)
 			{
-				clipmapLevel.SwapChunks(clipmapChunks[clipmapLevel.id]);
-				clipmapChunks[clipmapLevel.id].Clear();
+				clipmapLevel.SwapChunks(nullableClipmapChunks[clipmapLevel.id]);
+				nullableClipmapChunks[clipmapLevel.id].Clear();
 
 				if (remainingCellCount.All((levelCountPair) => levelCountPair.Value <= 0))
 				{
 					isMeshesRebuilding = false;
-					Logger.Info($"{clipmapLevel}: Mesh building finished with 'remainingCellCount' of {remainingCellCount[clipmapLevel.id]}");
+					Logger.Debug($"{clipmapLevel}: Mesh building finished with 'remainingCellCount' of {remainingCellCount[clipmapLevel.id]}");
 
 					if (rebuildingMessage != null)
 					{
@@ -117,7 +115,7 @@ namespace Terraforming.WorldStreaming
 
 			foreach (var blockRange in blockRanges)
 			{
-				var cellBounds = (Int3.Bounds)GetCellRangeMethod.Invoke(clipmapLevel, new object[] { blockRange });
+				var cellBounds = clipmapLevel.GetCellRange(blockRange);
 
 				foreach (Int3 cellId in cellBounds)
 				{

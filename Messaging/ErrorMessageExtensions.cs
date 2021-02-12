@@ -2,84 +2,73 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Terraforming.Messaging
 {
     static class ErrorMessageExtensions
     {
-        private static readonly MethodInfo GetExistingMessageMethod = typeof(ErrorMessage).GetMethod("GetExistingMessage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-        private static readonly FieldInfo mainField = typeof(ErrorMessage).GetField("main", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-        private static readonly FieldInfo timeFadeOutField = typeof(ErrorMessage).GetField("timeFadeOut", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-        private static readonly FieldInfo timeInvisibleField = typeof(ErrorMessage).GetField("timeInvisible", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-        private static readonly FieldInfo offsetYField = typeof(ErrorMessage).GetField("offsetY", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        public static ErrorMessage._Message pendingMessageToRemove;
 
-        private static readonly Type MessageClass = typeof(ErrorMessage).GetNestedType("_Message", BindingFlags.Public | BindingFlags.NonPublic);
-        private static readonly FieldInfo messageTimeEndField = MessageClass.GetField("timeEnd");
-        private static readonly FieldInfo messageEntryField = MessageClass.GetField("entry");
-
-        public static object pendingMessageToRemove;
-
-        public static object AddReturnMessage(string messageString)
+        public static ErrorMessage._Message AddReturnMessage(string messageString)
         {
             ErrorMessage.AddMessage(messageString);
 
-            var main = mainField.GetValue(null) as ErrorMessage;
+            var main = ErrorMessage.main;
 
             return main.GetExistingMessage(messageString);
         }
 
-        public static object GetExistingMessage(this ErrorMessage errorMessage, string messageString)
+        public static ErrorMessage._Message GetExistingMessage(this ErrorMessage errorMessage, string messageString)
         {
-            return GetExistingMessageMethod.Invoke(errorMessage, new object[] { messageString });
+            return errorMessage.GetExistingMessage(messageString);
         }
 
-        public static void SetMessageTimeEnd(object message, float timeEnd)
+        public static void SetMessageTimeEnd(ErrorMessage._Message message, float timeEnd)
         {
-            messageTimeEndField.SetValue(message, timeEnd);
+            message.timeEnd = timeEnd;
         }
 
-        public static void AddMessageTimeEnd(object message, float delayTime)
+        public static void AddMessageTimeEnd(ErrorMessage._Message message, float delayTime)
         {
-            var messageTimeEnd = (float)messageTimeEndField.GetValue(message);
+            var messageTimeEnd = message.timeEnd;
 
-            messageTimeEndField.SetValue(message, messageTimeEnd + delayTime);
+            message.timeEnd = messageTimeEnd + delayTime;
         }
 
-        public static float GetMessageTimeEnd(object message)
+        public static float GetMessageTimeEnd(ErrorMessage._Message message)
         {
-            return (float)messageTimeEndField.GetValue(message);
+            return message.timeEnd;
         }
 
         public static float GetTimeFadeOut()
         {
-            var main = mainField.GetValue(null) as ErrorMessage;
+            var main = ErrorMessage.main;
 
-            return (float)timeFadeOutField.GetValue(main);
+            return main.timeFadeOut;
         }
 
         public static float GetTimeInvisible()
         {
-            var main = mainField.GetValue(null) as ErrorMessage;
+            var main = ErrorMessage.main;
 
-            return (float)timeInvisibleField.GetValue(main);
+            return main.timeInvisible;
         }
 
         public static void RemoveOffsetY(float offsetToRemove)
         {
-            var main = mainField.GetValue(null) as ErrorMessage;
-            var offsetY = (float)offsetYField.GetValue(main);
+            var main = ErrorMessage.main;
+            var offsetY = main.offsetY;
 
             Logger.Debug($"Removing 'offsetY' of {offsetY} by {offsetToRemove}");
 
-            offsetYField.SetValue(main, offsetY - offsetToRemove);
+            main.offsetY = offsetY - offsetToRemove;
         }
 
-        public static Text GetMessageEntry(object message)
+        public static TextMeshProUGUI GetMessageEntry(ErrorMessage._Message message)
         {
-            return messageEntryField.GetValue(message) as Text;
+            return message.entry;
         }
     }
 }

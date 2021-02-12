@@ -10,9 +10,6 @@ namespace Terraforming.WorldStreaming
 {
     static class BatchOctreesStreamerExtensions
     {
-        private static readonly FieldInfo batchesField = typeof(BatchOctreesStreamer).GetField("batches", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-        private static readonly FieldInfo numOctreesPerBatchField = typeof(BatchOctreesStreamer).GetField("numOctreesPerBatch", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
         public static string GetTmpPath(this BatchOctreesStreamer batchOctreesStreamer, Int3 batchId)
         {
             var tmpPathPrefix = Path.Combine(LargeWorldStreamer.main.tmpPathPrefix, "CompiledOctreesCache");
@@ -30,7 +27,7 @@ namespace Terraforming.WorldStreaming
 
         public static void SetBatchOctree(this BatchOctreesStreamer batchOctreesStreamer, Int3 absoluteOctreeId, VoxelandData.OctNode root)
         {
-            var numOctreesPerBatch = (int)numOctreesPerBatchField.GetValue(batchOctreesStreamer);
+            var numOctreesPerBatch = batchOctreesStreamer.numOctreesPerBatch;
 
             var batchId = Int3.FloorDiv(absoluteOctreeId, numOctreesPerBatch);
             var batch = batchOctreesStreamer.GetBatch(batchId);
@@ -44,7 +41,7 @@ namespace Terraforming.WorldStreaming
 
         public static void WriteBatchOctrees(this BatchOctreesStreamer batchOctreesStreamer)
         {
-            var batches = batchesField.GetValue(batchOctreesStreamer) as Array3<BatchOctrees>;
+            var batches = batchOctreesStreamer.batches;
             foreach (var batchOctrees in batches)
             {
                 if (batchOctrees != null && batchOctrees.IsLoaded() && (batchOctrees.GetIsDirty()))

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Unity.Collections;
 using UWE;
 using WorldStreaming;
 
@@ -11,12 +12,6 @@ namespace Terraforming.WorldStreaming
 {
     static class OctreeExtensions
 	{
-		private static readonly MethodInfo IsLeafMethod = typeof(Octree).GetMethod("IsLeaf", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-		private static readonly MethodInfo GetFirstChildIdMethod = typeof(Octree).GetMethod("GetFirstChildId", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-		private static readonly FieldInfo dataField = typeof(Octree).GetField("data", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-		private static readonly FieldInfo idField = typeof(Octree).GetField("id", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-		
 		public static VoxelandData.OctNode ToVLOctree(this Octree octree)
 		{
 			return octree.ToVLOctNodeRecursive(0);
@@ -26,7 +21,7 @@ namespace Terraforming.WorldStreaming
 		{
 			int octreeDataLength = 0;
 
-			var octreeData = dataField.GetValue(octree) as LinearArrayHeap<byte>.Alloc;
+			var octreeData = octree.data;
 			if (octreeData != null)
 			{
 				octreeDataLength = octreeData.Length;
@@ -36,18 +31,18 @@ namespace Terraforming.WorldStreaming
 
 			if (octreeData != null)
 			{
-				binaryWriter.Write(octreeData.Array, octreeData.Offset, octreeDataLength);
+				binaryWriter.Write(octreeData.ToArray());
 			}
 		}
 
-		public static LinearArrayHeap<byte>.Alloc GetData(this Octree octree)
+		public static NativeArray<byte> GetData(this Octree octree)
 		{
-			return dataField.GetValue(octree) as LinearArrayHeap<byte>.Alloc;
+			return octree.data;
 		}
 
 		public static Int3 GetId(this Octree octree)
 		{
-			return (Int3)idField.GetValue(octree);
+			return octree.id;
 		}
 
 		private static VoxelandData.OctNode ToVLOctNodeRecursive(this Octree octree, int nid)
@@ -55,7 +50,7 @@ namespace Terraforming.WorldStreaming
 			CompactOctree.Node node = octree.GetNode(nid);
 			VoxelandData.OctNode octNode = node.ToVLNode();
 
-			if (!(bool)IsLeafMethod.Invoke(octree, new object[] { nid }))
+			if (!octree.IsLeaf(nid))
 			{
 				octNode.childNodes = VoxelandData.OctNode.childNodesPool.Get();
 				for (int i = 0; i < 8; i++)
@@ -68,12 +63,12 @@ namespace Terraforming.WorldStreaming
 
 		private static CompactOctree.Node GetNode(this Octree octree, int id)
 		{
-			return new CompactOctree.Node(octree.GetType(id), octree.GetDensity(id), Convert.ToUInt16(GetFirstChildIdMethod.Invoke(octree, new object[] { id })));
+			return new CompactOctree.Node(octree.GetType(id), octree.GetDensity(id), Convert.ToUInt16(octree.GetFirstChildId(id)));
 		}
 
 		private static void SetNode(this Octree octree, int id, byte type, byte density, ushort firstChildId)
 		{
-			var octreeData = dataField.GetValue(octree) as LinearArrayHeap<byte>.Alloc;
+			var octreeData = octree.data;
 
 			int num = id * 4;
 			octreeData[num] = type;
@@ -82,14 +77,14 @@ namespace Terraforming.WorldStreaming
 			octreeData[num + 3] = Convert.ToByte(firstChildId >> 8);
 		}
 
-		public static void Set(this Octree octree, VoxelandData.OctNode root, LinearArrayHeap<byte> allocator)
+		public static void Set(this Octree octree, VoxelandData.OctNode root, SplitNativeArrayPool<byte> allocator)
 		{
 			int num = root.CountNodes() * 4;
 
 			octree.Clear(allocator);
-			var octreeData = allocator.Allocate(num);
+			var octreeData = allocator.Get(num);
 
-			dataField.SetValue(octree, octreeData);
+			octree.data = octreeData;
 
 			ushort num2 = 1;
 			octree.SetInternal(root, 0, ref num2);
