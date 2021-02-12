@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Terraforming.WorldLegacyStreaming;
 using Terraforming.WorldStreaming;
 using UnityEngine;
 
@@ -52,6 +53,12 @@ namespace Terraforming.Tools.TerraformerPatches
         {
             if (__state)
             {
+                var type = LargeWorldStreamer.main.GetMaterialTypeOfLastOctreesEditAdd();
+                if (type > 0)
+                { 
+                    __instance.type = type;
+                }
+
                 var streamerV2 = LargeWorldStreamer.main.streamerV2;
                 streamerV2.clipmapStreamer.FlushRangesEdited(streamerV2.octreesStreamer.minLod, streamerV2.octreesStreamer.maxLod);
 
