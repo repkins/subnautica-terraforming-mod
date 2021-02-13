@@ -11,11 +11,11 @@ namespace Terraforming
     {
         public static void Patch()
         {
-            var harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "subnautica.repkins.terraforming");
-            Logger.Info("Successfully patched");
-
             Config.Load();
             Logger.Info("Config successfully loaded");
+
+            var harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "subnautica.repkins.terraforming.bz");
+            Logger.Info("Successfully patched");
         }
     }
 }

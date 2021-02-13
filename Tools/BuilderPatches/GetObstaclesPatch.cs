@@ -18,7 +18,10 @@ namespace Terraforming.Tools.BuilderPatches
                 results.RemoveAll((gameObject) => Builder.IsObstacle(gameObject.GetComponent<Collider>()));
             }
 
-            results.RemoveAll((gameObject) => gameObject.GetComponent<ConstructionObstacle>() != null);
+            if (Config.Instance.destroyLargerObstaclesOnConstruction)
+            {
+                results.RemoveAll((gameObject) => gameObject.GetComponent<ConstructionObstacle>() != null);
+            }
         }
     }
 }
