@@ -79,6 +79,7 @@
   <ItemGroup>
     <Compile Include="Config.cs" />
     <Compile Include="Tools\BuilderPatches\GetObstaclesPatch.cs" />
+    <Compile Include="Tools\BuilderPatches\CanDestroyObjectPatch.cs" />
     <Compile Include="Tools\ConstructableBasePatches\SetStatePatch.cs" />
     <Compile Include="Tools\PlayerToolExtensions.cs" />
     <Compile Include="Tools\RepulsionCannonPatches\OnToolUseAnimPatch.cs" />
