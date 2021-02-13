@@ -18,34 +18,44 @@ namespace Terraforming.Tools.BuilderPatches
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
-            var instructionsEnumerator = instructions.GetEnumerator();
-            while (instructionsEnumerator.MoveNext())
+            if (Config.Instance.destroyLargerObstaclesOnConstruction)
             {
-                if (instructionsEnumerator.Current.Calls(GetComponentMethod.MakeGenericMethod(typeof(IObstacle))))
+                var instructionsEnumerator = instructions.GetEnumerator();
+                while (instructionsEnumerator.MoveNext())
                 {
-                    yield return instructionsEnumerator.Current;
-
-                    if (instructionsEnumerator.MoveNext() && instructionsEnumerator.Current.Branches(out var nullableNextFromOriginalLabel))
+                    if (instructionsEnumerator.Current.Calls(GetComponentMethod.MakeGenericMethod(typeof(IObstacle))))
                     {
                         yield return instructionsEnumerator.Current;
 
-                        yield return new CodeInstruction(OpCodes.Ldarg_0);
-                        yield return new CodeInstruction(OpCodes.Callvirt, GetComponentMethod.MakeGenericMethod(typeof(ConstructionObstacle)));
-
-                        var nextFromInsertedLabel = generator.DefineLabel();
-                        yield return new CodeInstruction(OpCodes.Brtrue_S, nextFromInsertedLabel);
-
-                        while (instructionsEnumerator.MoveNext() && !instructionsEnumerator.Current.labels.Contains(nullableNextFromOriginalLabel.Value))
+                        if (instructionsEnumerator.MoveNext() && instructionsEnumerator.Current.Branches(out var nullableNextFromOriginalLabel))
                         {
                             yield return instructionsEnumerator.Current;
-                        }
 
-                        yield return instructionsEnumerator.Current.WithLabels(nextFromInsertedLabel);
+                            yield return new CodeInstruction(OpCodes.Ldarg_0);
+                            yield return new CodeInstruction(OpCodes.Callvirt, GetComponentMethod.MakeGenericMethod(typeof(ConstructionObstacle)));
+
+                            var nextFromInsertedLabel = generator.DefineLabel();
+                            yield return new CodeInstruction(OpCodes.Brtrue_S, nextFromInsertedLabel);
+
+                            while (instructionsEnumerator.MoveNext() && !instructionsEnumerator.Current.labels.Contains(nullableNextFromOriginalLabel.Value))
+                            {
+                                yield return instructionsEnumerator.Current;
+                            }
+
+                            yield return instructionsEnumerator.Current.WithLabels(nextFromInsertedLabel);
+                        }
+                    }
+                    else
+                    {
+                        yield return instructionsEnumerator.Current;
                     }
                 }
-                else
+            }
+            else
+            {
+                foreach (var instruction in instructions)
                 {
-                    yield return instructionsEnumerator.Current;
+                    yield return instruction;
                 }
             }
         }
