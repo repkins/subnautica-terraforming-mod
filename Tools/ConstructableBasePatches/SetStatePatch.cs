@@ -21,7 +21,7 @@ namespace Terraforming.Tools.ConstructableBasePatches
                     var constructableBoundsList = new List<ConstructableBounds>();
                     __instance.GetComponentsInChildren(true, constructableBoundsList);
 
-                    var hasAnyOverlappedObstacles = false;
+                    var hasAnyOverlappedTerrainObstacles = false;
 
                     var orientedBoundsList = constructableBoundsList.Select(constructableBounds => OrientedBounds.ToWorldBounds(constructableBounds.transform, constructableBounds.bounds));
                     foreach (var orientedBounds in orientedBoundsList)
@@ -33,12 +33,12 @@ namespace Terraforming.Tools.ConstructableBasePatches
 
                         if (overlappedObjects.Any((gameObject) => Builder.IsObstacle(gameObject.GetComponent<Collider>())))
                         {
-                            hasAnyOverlappedObstacles = true;
+                            hasAnyOverlappedTerrainObstacles = true;
                             break;
                         }
                     }
 
-                    if (hasAnyOverlappedObstacles)
+                    if (hasAnyOverlappedTerrainObstacles)
                     {
                         foreach (var orientedBounds in orientedBoundsList)
                         {
