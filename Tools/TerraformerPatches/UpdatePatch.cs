@@ -13,7 +13,7 @@ namespace Terraforming.Tools.TerraformerPatches
     [HarmonyPatch("Update")]
     static class UpdatePatch
     {
-        static bool Prefix(Terraformer __instance, out bool __state, bool ___penDown, Stack<GameObject> ___activeStrokes)
+        static bool Prefix(Terraformer __instance, out bool __state)
         {
             __state = false;
 
@@ -39,9 +39,9 @@ namespace Terraforming.Tools.TerraformerPatches
                 return false;
             }
 
-            var hasActiveStrokes = ___activeStrokes.Count > 0;
+            var hasActiveStrokes = __instance.activeStrokes.Count > 0;
             var isAnyHandHeld = __instance.GetUsingPlayer().GetRightHandHeld() || __instance.GetUsingPlayer().GetLeftHandHeld();
-            if (___penDown && hasActiveStrokes && !isAnyHandHeld)
+            if (__instance.penDown && hasActiveStrokes && !isAnyHandHeld)
             {
                 __state = true;
             }
