@@ -44,6 +44,12 @@ namespace Terraforming.Tools.TerraformerPatches
             if (__instance.penDown && hasActiveStrokes && !isAnyHandHeld)
             {
                 __state = true;
+
+                if (__instance.type == 14)
+                {
+                    Logger.Warning($"Terraformer.type uses undefined material type 14. Resetting to 1");
+                    __instance.type = 1;
+                }
             }
 
             return true;
