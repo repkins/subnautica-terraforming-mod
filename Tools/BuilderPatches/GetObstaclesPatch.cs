@@ -21,6 +21,7 @@ namespace Terraforming.Tools.BuilderPatches
             if (Config.Instance.destroyLargerObstaclesOnConstruction)
             {
                 results.RemoveAll((gameObject) => gameObject.GetComponent<ConstructionObstacle>() != null);
+                results.RemoveAll((gameObject) => gameObject.GetComponent<ImmuneToPropulsioncannon>() != null);
             }
         }
     }

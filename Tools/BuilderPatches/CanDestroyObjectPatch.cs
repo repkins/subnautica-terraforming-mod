@@ -31,18 +31,22 @@ namespace Terraforming.Tools.BuilderPatches
                         {
                             yield return instructionsEnumerator.Current;
 
+                            var nextFromConstructionLabel = generator.DefineLabel();
                             yield return new CodeInstruction(OpCodes.Ldarg_0);
                             yield return new CodeInstruction(OpCodes.Callvirt, GetComponentMethod.MakeGenericMethod(typeof(ConstructionObstacle)));
+                            yield return new CodeInstruction(OpCodes.Brtrue_S, nextFromConstructionLabel);
 
-                            var nextFromInsertedLabel = generator.DefineLabel();
-                            yield return new CodeInstruction(OpCodes.Brtrue_S, nextFromInsertedLabel);
+                            var nextFromImmuneLabel = generator.DefineLabel();
+                            yield return new CodeInstruction(OpCodes.Ldarg_0);
+                            yield return new CodeInstruction(OpCodes.Callvirt, GetComponentMethod.MakeGenericMethod(typeof(ImmuneToPropulsioncannon)));
+                            yield return new CodeInstruction(OpCodes.Brtrue_S, nextFromImmuneLabel);
 
                             while (instructionsEnumerator.MoveNext() && !instructionsEnumerator.Current.labels.Contains(nullableNextFromOriginalLabel.Value))
                             {
                                 yield return instructionsEnumerator.Current;
                             }
 
-                            yield return instructionsEnumerator.Current.WithLabels(nextFromInsertedLabel);
+                            yield return instructionsEnumerator.Current.WithLabels(nextFromConstructionLabel, nextFromImmuneLabel);
                         }
                     }
                     else
