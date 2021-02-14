@@ -12,15 +12,13 @@ namespace Terraforming.WorldStreaming
 {
     static class ClipmapLevelExtensions
     {
-		private static readonly MethodInfo GetCellRangeMethod = typeof(ClipmapLevel).GetMethod("GetCellRange", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
 		private const string rebuildingTerrainMsg = "Rebuilding terrain area...";
 
 		private static Dictionary<int, int> remainingCellCount = new Dictionary<int, int>();
 		private static Dictionary<int, Dictionary<Int3, ClipmapChunk>> clipmapChunks = new Dictionary<int, Dictionary<Int3, ClipmapChunk>>();
 
-		private static object rebuildingMessage = null;
-		public static bool isMeshesRebuilding = false;
+        private static ErrorMessage._Message rebuildingMessage = null;
+        public static bool isMeshesRebuilding = false;
 
 		public static void OnBatchOctreesEdited(this ClipmapLevel clipmapLevel, List<Int3.Bounds> blockRanges)
 		{
@@ -69,7 +67,7 @@ namespace Terraforming.WorldStreaming
 				if (remainingCellCount.All((levelCountPair) => levelCountPair.Value <= 0))
 				{
 					isMeshesRebuilding = false;
-					Logger.Info($"{clipmapLevel}: Mesh building finished with 'remainingCellCount' of {remainingCellCount[clipmapLevel.id]}");
+					Logger.Debug($"{clipmapLevel}: Mesh building finished with 'remainingCellCount' of {remainingCellCount[clipmapLevel.id]}");
 
 					if (rebuildingMessage != null)
 					{
@@ -116,10 +114,10 @@ namespace Terraforming.WorldStreaming
 			var processingCells = new List<ClipmapCell>();
 
 			foreach (var blockRange in blockRanges)
-			{
-				var cellBounds = (Int3.Bounds)GetCellRangeMethod.Invoke(clipmapLevel, new object[] { blockRange });
+            {
+                var cellBounds = clipmapLevel.GetCellRange(blockRange);
 
-				foreach (Int3 cellId in cellBounds)
+                foreach (Int3 cellId in cellBounds)
 				{
 					ClipmapCell cell = clipmapLevel.GetCell(cellId);
 					if (cell != null)
