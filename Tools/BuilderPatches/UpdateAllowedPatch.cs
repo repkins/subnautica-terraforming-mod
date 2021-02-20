@@ -18,10 +18,10 @@ namespace Terraforming.Tools.BuilderPatches
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
-            var codeMatcherCursor = new CodeMatcher(instructions);
-
             if (Config.Instance.destroyLargerObstaclesOnConstruction)
             {
+                var codeMatcherCursor = new CodeMatcher(instructions);
+
                 PatchClearFromConstructionObstacles(codeMatcherCursor);
                 if (codeMatcherCursor.IsInvalid)
                 {

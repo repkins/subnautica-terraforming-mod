@@ -14,7 +14,7 @@ namespace Terraforming
         public bool habitantModulesPartialBurying = true;
         public bool terrainImpactWithPropulsionCannon = true;
         public float spaceBetweenTerrainHabitantModule = 1.0f;
-        public bool destroyLargerObstaclesOnConstruction = false;
+        public bool destroyLargerObstaclesOnConstruction = true;
 
         private static string assemblyName = Assembly.GetCallingAssembly().GetName().Name;
         private static string configPath = Environment.CurrentDirectory + @"\QMods\" + assemblyName + @"\config.json";
