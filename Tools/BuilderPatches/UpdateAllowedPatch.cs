@@ -120,17 +120,17 @@ namespace Terraforming.Tools.BuilderPatches
 
                 if (codeMatcherCursor.IsValid)
                 {
-                    var constructionObstacleLabel = generator.DefineLabel();
-
                     var rendererLocal = (LocalBuilder)codeMatcherCursor.Advance(1).Operand;
                     var submeshIndexLocal = (LocalBuilder)codeMatcherCursor.Advance(2).Operand;
 
+                    codeMatcherCursor.Advance(-3);
+
+                    var notConstructionObstacleLabel = generator.DefineLabel();
                     codeMatcherCursor
-                        .Advance(2)
                         .InsertAndAdvance(
                             new CodeInstruction(OpCodes.Ldloc_S, obstacleLocal),
                             new CodeInstruction(OpCodes.Call, AccessTools.Method($"{typeof(UpdateAllowedPatch)}:{nameof(IsConstructionObstacle)}", new Type[] { typeof(GameObject) })),
-                            new CodeInstruction(OpCodes.Brfalse_S, constructionObstacleLabel)
+                            new CodeInstruction(OpCodes.Brfalse_S, notConstructionObstacleLabel)
                         );
 
                     codeMatcherCursor
@@ -147,7 +147,16 @@ namespace Terraforming.Tools.BuilderPatches
                             new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(CommandBuffer), nameof(CommandBuffer.DrawRenderer), new Type[] { typeof(Renderer), typeof(Material), typeof(int) }))
                         );
 
-                    codeMatcherCursor.Instruction.WithLabels(constructionObstacleLabel);
+                    var isConstructionObstacleLabel = generator.DefineLabel();
+                    codeMatcherCursor
+                        .InsertAndAdvance(
+                            new CodeInstruction(OpCodes.Br_S, isConstructionObstacleLabel)
+                        );
+
+                    codeMatcherCursor.Instruction.WithLabels(notConstructionObstacleLabel);
+
+                    codeMatcherCursor.Advance(5);
+                    codeMatcherCursor.Instruction.WithLabels(isConstructionObstacleLabel);
                 }
             }
         }
@@ -161,7 +170,7 @@ namespace Terraforming.Tools.BuilderPatches
         {
             if (destroyableObstacleMat == null)
             {
-                destroyableObstacleMat = Builder.builderObstacleMaterial;
+                destroyableObstacleMat = new Material(Builder.builderObstacleMaterial);
                 destroyableObstacleMat.SetColor(ShaderPropertyID._Tint, Color.red);
             }
         }
