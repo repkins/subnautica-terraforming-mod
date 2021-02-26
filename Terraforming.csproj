@@ -106,12 +106,13 @@
     <Compile Include="WorldStreaming\BatchOctreesStreamerExtensions.cs" />
     <Compile Include="WorldStreaming\BatchOctreesStreamerPatches\GetPathPatch.cs" />
     <Compile Include="WorldStreaming\ClipmapCellExtensions.cs" />
-    <Compile Include="WorldStreaming\ClipmapCellPatches\BeginBuildLayersPatch.cs" />
     <Compile Include="WorldStreaming\ClipmapLevelExtensions.cs" />
     <Compile Include="WorldStreaming\ClipmapStreamerExtensions.cs" />
     <Compile Include="WorldStreaming\OctreeExtensions.cs" />
-    <Compile Include="WorldStreaming\OctreePatches\ReadPatch.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="WorldStreaming\ClipmapCellPatches\" />
+    <Folder Include="WorldStreaming\OctreePatches\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

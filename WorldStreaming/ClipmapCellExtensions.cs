@@ -30,7 +30,7 @@ namespace Terraforming.WorldStreaming
         {
             Logger.Debug($"{clipmapCell}: Begin");
 
-            var clipmapStreamer = clipmapCell.level.streamer;
+            var clipmapStreamer = clipmapCell.streamer;
             var octreesStreamer = clipmapStreamer.host.GetOctreesStreamer(clipmapCell.level.id);
 
             meshBuilder = clipmapStreamer.meshBuilderPool.Get();
@@ -52,13 +52,16 @@ namespace Terraforming.WorldStreaming
         {
             Logger.Debug($"{clipmapCell}: Begin");
 
-            var host = clipmapCell.level.streamer.host;
-            var clipmapChunk = meshBuilder.DoFinalizePart(host.chunkRoot, host.chunkPrefab, host.chunkLayerPrefab);
-            clipmapCell.level.streamer.meshBuilderPool.Return(meshBuilder);
+            ClipmapChunk nullableClipmapChunk = null;
+            if (clipmapCell.streamer != null && clipmapCell.streamer.host != null)
+            {
+                var host = clipmapCell.level.streamer.host;
+                nullableClipmapChunk = meshBuilder.DoFinalizePart(host.chunkRoot, host.terrainPoolManager);
+                clipmapCell.streamer.meshBuilderPool.Return(meshBuilder);
 
-            yield return clipmapCell.ActivateChunkAndCollider(clipmapChunk);
-
-            clipmapCell.level.OnEndBuildLayers(clipmapCell, clipmapChunk);
+                yield return clipmapCell.ActivateChunkAndCollider(nullableClipmapChunk);
+            }
+            clipmapCell.level.OnEndBuildLayers(clipmapCell, nullableClipmapChunk);
 
             Logger.Debug($"{clipmapCell}: End");
 
@@ -79,12 +82,11 @@ namespace Terraforming.WorldStreaming
             var oldClipmapChunk = clipmapCell.chunk;
             if (oldClipmapChunk)
             {
-                MeshBuilder.DestroyMeshes(oldClipmapChunk);
-
-                if (oldClipmapChunk.gameObject)
+                if (!clipmapCell.streamer.host.terrainPoolManager.meshPoolingEnabled)
                 {
-                    UnityEngine.Object.Destroy(oldClipmapChunk.gameObject);
+                    MeshBuilder.DestroyMeshes(oldClipmapChunk);
                 }
+                clipmapCell.ReturnChunkToPool(oldClipmapChunk);
             }
 
             clipmapCell.chunk = nullableClipmapChunk;
