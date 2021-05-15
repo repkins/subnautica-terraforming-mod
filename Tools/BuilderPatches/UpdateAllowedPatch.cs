@@ -18,31 +18,26 @@ namespace Terraforming.Tools.BuilderPatches
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
-            if (Config.Instance.destroyLargerObstaclesOnConstruction)
+            var codeMatcherCursor = new CodeMatcher(instructions);
+
+            PatchClearFromConstructionObstacles(codeMatcherCursor, generator);
+            if (codeMatcherCursor.IsInvalid)
             {
-                var codeMatcherCursor = new CodeMatcher(instructions);
-
-                PatchClearFromConstructionObstacles(codeMatcherCursor);
-                if (codeMatcherCursor.IsInvalid)
-                {
-                    codeMatcherCursor.ReportFailure(AccessTools.Method(typeof(Builder), nameof(Builder.UpdateAllowed)), Logger.Warning);
-                    return instructions;
-                }
-
-                PatchHighlightInRedConstructionObstacles(codeMatcherCursor, generator);
-                if (codeMatcherCursor.IsInvalid)
-                {
-                    codeMatcherCursor.ReportFailure(AccessTools.Method(typeof(Builder), nameof(Builder.UpdateAllowed)), Logger.Warning);
-                    return instructions;
-                }
-
-                return codeMatcherCursor.InstructionEnumeration();
+                codeMatcherCursor.ReportFailure(AccessTools.Method(typeof(Builder), nameof(Builder.UpdateAllowed)), Logger.Warning);
+                return instructions;
             }
 
-            return instructions;
+            PatchHighlightInRedConstructionObstacles(codeMatcherCursor, generator);
+            if (codeMatcherCursor.IsInvalid)
+            {
+                codeMatcherCursor.ReportFailure(AccessTools.Method(typeof(Builder), nameof(Builder.UpdateAllowed)), Logger.Warning);
+                return instructions;
+            }
+
+            return codeMatcherCursor.InstructionEnumeration();
         }
 
-        static void PatchClearFromConstructionObstacles(CodeMatcher codeCursor)
+        static void PatchClearFromConstructionObstacles(CodeMatcher codeCursor, ILGenerator generator)
         {
             codeCursor.Start();
             codeCursor.MatchForward(false,
@@ -57,6 +52,7 @@ namespace Terraforming.Tools.BuilderPatches
 
             if (codeCursor.IsValid)
             {
+                // Remove boolean result assignent as we are "moving" it to after obstacle highlighting block
                 var labels = codeCursor.Instruction.ExtractLabels();
                 codeCursor.RemoveInstructions(7);
                 codeCursor.AddLabels(labels);
@@ -77,13 +73,22 @@ namespace Terraforming.Tools.BuilderPatches
                     {
                         labels = codeCursor.Instruction.ExtractLabels();
 
+                        // Make it to allow construction by clearing contruction obstacles for boolean result assignment if destroying obstacles is enabled
+                        var disabledDestroyObstaclesLabel = generator.DefineLabel();
                         codeCursor.InsertAndAdvance(
-                            new CodeInstruction(OpCodes.Ldloc_3).WithLabels(labels),
-                            new CodeInstruction(OpCodes.Call, AccessTools.Method($"{typeof(UpdateAllowedPatch)}:{nameof(ClearConstructionObstacles)}", new Type[] { typeof(List<GameObject>) }))
+                            new CodeInstruction(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(Config), nameof(Config.Instance))).WithLabels(labels),
+                            new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(Config), nameof(Config.destroyLargerObstaclesOnConstruction))),
+                            new CodeInstruction(OpCodes.Brfalse_S, disabledDestroyObstaclesLabel)
                         );
 
                         codeCursor.InsertAndAdvance(
-                            new CodeInstruction(OpCodes.Ldloc_1),
+                            new CodeInstruction(OpCodes.Ldloc_3),
+                            new CodeInstruction(OpCodes.Call, AccessTools.Method($"{typeof(UpdateAllowedPatch)}:{nameof(ClearConstructionObstacles)}", new Type[] { typeof(List<GameObject>) }))
+                        );
+
+                        // Assign boolean result here (was before highlighting block)
+                        codeCursor.InsertAndAdvance(
+                            new CodeInstruction(OpCodes.Ldloc_1).WithLabels(disabledDestroyObstaclesLabel),
                             new CodeInstruction(OpCodes.Ldloc_3),
                             new CodeInstruction(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(List<GameObject>), nameof(List<GameObject>.Count))),
                             new CodeInstruction(OpCodes.Ldc_I4_0),
@@ -125,6 +130,16 @@ namespace Terraforming.Tools.BuilderPatches
 
                     codeMatcherCursor.Advance(-3);
 
+                    // Check if obstacle destroying is enabled
+                    var disabledDestroyObstaclesLabel = generator.DefineLabel();
+                    codeMatcherCursor
+                        .InsertAndAdvance(
+                            new CodeInstruction(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(Config), nameof(Config.Instance))),
+                            new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(Config), nameof(Config.destroyLargerObstaclesOnConstruction))),
+                            new CodeInstruction(OpCodes.Brfalse_S, disabledDestroyObstaclesLabel)
+                        );
+
+                    // Then check if construction obstacle
                     var notConstructionObstacleLabel = generator.DefineLabel();
                     codeMatcherCursor
                         .InsertAndAdvance(
@@ -133,11 +148,13 @@ namespace Terraforming.Tools.BuilderPatches
                             new CodeInstruction(OpCodes.Brfalse_S, notConstructionObstacleLabel)
                         );
 
+                    // Then define destroy material
                     codeMatcherCursor
                         .InsertAndAdvance(
                             new CodeInstruction(OpCodes.Call, AccessTools.Method($"{typeof(UpdateAllowedPatch)}:{nameof(DefineDestroyMaterialIfNot)}"))
                         );
 
+                    // And then highlight in red
                     codeMatcherCursor
                         .InsertAndAdvance(
                             new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(Builder), nameof(Builder.obstaclesBuffer))),
@@ -147,15 +164,17 @@ namespace Terraforming.Tools.BuilderPatches
                             new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(CommandBuffer), nameof(CommandBuffer.DrawRenderer), new Type[] { typeof(Renderer), typeof(Material), typeof(int) }))
                         );
 
+                    // Then jump over instructions within "else" block
                     var isConstructionObstacleLabel = generator.DefineLabel();
                     codeMatcherCursor
                         .InsertAndAdvance(
                             new CodeInstruction(OpCodes.Br_S, isConstructionObstacleLabel)
                         );
 
-                    codeMatcherCursor.Instruction.WithLabels(notConstructionObstacleLabel);
-
+                    // Or else highlight in default (yellow)
+                    codeMatcherCursor.Instruction.WithLabels(disabledDestroyObstaclesLabel, notConstructionObstacleLabel);
                     codeMatcherCursor.Advance(5);
+
                     codeMatcherCursor.Instruction.WithLabels(isConstructionObstacleLabel);
                 }
             }
