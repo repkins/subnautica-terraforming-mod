@@ -8,13 +8,22 @@ using System.Text;
 
 namespace Terraforming
 {
+    class DefaultConfig
+    {
+        public static readonly bool rebuildMessages = true;
+        public static readonly bool habitantModulesPartialBurying = true;
+        public static readonly bool terrainImpactWithPropulsionCannon = true;
+        public static readonly float spaceBetweenTerrainHabitantModule = 1.0f;
+        public static readonly bool destroyLargerObstaclesOnConstruction = true;
+    }
+
     class Config
     {
-        public bool rebuildMessages = true;
-        public bool habitantModulesPartialBurying = true;
-        public bool terrainImpactWithPropulsionCannon = true;
-        public float spaceBetweenTerrainHabitantModule = 1.0f;
-        public bool destroyLargerObstaclesOnConstruction = false;
+        public bool rebuildMessages = DefaultConfig.rebuildMessages;
+        public bool habitantModulesPartialBurying = DefaultConfig.habitantModulesPartialBurying;
+        public bool terrainImpactWithPropulsionCannon = DefaultConfig.terrainImpactWithPropulsionCannon;
+        public float spaceBetweenTerrainHabitantModule = DefaultConfig.spaceBetweenTerrainHabitantModule;
+        public bool destroyLargerObstaclesOnConstruction = DefaultConfig.destroyLargerObstaclesOnConstruction;
 
         private static string assemblyName = Assembly.GetCallingAssembly().GetName().Name;
         private static string configPath = Environment.CurrentDirectory + @"\QMods\" + assemblyName + @"\config.json";
@@ -29,7 +38,9 @@ namespace Terraforming
         {
             if (!File.Exists(configPath))
             {
-                File.WriteAllText(configPath, JsonConvert.SerializeObject(Instance, Formatting.Indented));
+                Logger.Info($"Creating config.");
+
+                Save();
                 return;
             }
 
@@ -43,6 +54,12 @@ namespace Terraforming
                 var userValue = field.GetValue(userSettings);
                 field.SetValue(Instance, userValue);
             }
+        }
+
+        public static void Save()
+        {
+            Logger.Info($"Saving config.");
+            File.WriteAllText(configPath, JsonConvert.SerializeObject(Instance, Formatting.Indented));
         }
     }
 }
