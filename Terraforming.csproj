@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="Configuration\uGuiOptionsPanelPatches.cs" />
     <Compile Include="Tools\BuilderPatches\GetObstaclesPatch.cs" />
     <Compile Include="Tools\BuilderPatches\CanDestroyObjectPatch.cs" />
     <Compile Include="Tools\BuilderPatches\UpdateAllowedPatch.cs" />
