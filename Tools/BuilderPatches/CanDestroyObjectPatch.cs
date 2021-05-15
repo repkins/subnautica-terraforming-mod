@@ -18,48 +18,48 @@ namespace Terraforming.Tools.BuilderPatches
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
-            if (Config.Instance.destroyLargerObstaclesOnConstruction)
+            var instructionsEnumerator = instructions.GetEnumerator();
+            while (instructionsEnumerator.MoveNext())
             {
-                var instructionsEnumerator = instructions.GetEnumerator();
-                while (instructionsEnumerator.MoveNext())
+                if (instructionsEnumerator.Current.Calls(GetComponentMethod.MakeGenericMethod(typeof(IObstacle))))
                 {
-                    if (instructionsEnumerator.Current.Calls(GetComponentMethod.MakeGenericMethod(typeof(IObstacle))))
+                    yield return instructionsEnumerator.Current;
+
+                    if (instructionsEnumerator.MoveNext() && instructionsEnumerator.Current.Branches(out var onNotIObstacleNullableLabel))
                     {
                         yield return instructionsEnumerator.Current;
 
-                        if (instructionsEnumerator.MoveNext() && instructionsEnumerator.Current.Branches(out var nullableNextFromOriginalLabel))
+                        var onDisabledDestroyingObstaclesLabel = generator.DefineLabel();
+                        yield return new CodeInstruction(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(Config), nameof(Config.Instance)));
+                        yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(Config), nameof(Config.destroyLargerObstaclesOnConstruction)));
+                        yield return new CodeInstruction(OpCodes.Brfalse_S, onDisabledDestroyingObstaclesLabel);
+
+                        var onConstructionObstacleLabel = generator.DefineLabel();
+                        yield return new CodeInstruction(OpCodes.Ldarg_0);
+                        yield return new CodeInstruction(OpCodes.Callvirt, GetComponentMethod.MakeGenericMethod(typeof(ConstructionObstacle)));
+                        yield return new CodeInstruction(OpCodes.Brtrue_S, onConstructionObstacleLabel);
+
+                        var onImmuneToLabel = generator.DefineLabel();
+                        yield return new CodeInstruction(OpCodes.Ldarg_0);
+                        yield return new CodeInstruction(OpCodes.Callvirt, GetComponentMethod.MakeGenericMethod(typeof(ImmuneToPropulsioncannon)));
+                        yield return new CodeInstruction(OpCodes.Brtrue_S, onImmuneToLabel);
+
+                        if (instructionsEnumerator.MoveNext())
+                        {
+                            yield return instructionsEnumerator.Current.WithLabels(onDisabledDestroyingObstaclesLabel);
+                        }
+
+                        while (instructionsEnumerator.MoveNext() && !instructionsEnumerator.Current.labels.Contains(onNotIObstacleNullableLabel.Value))
                         {
                             yield return instructionsEnumerator.Current;
-
-                            var nextFromConstructionLabel = generator.DefineLabel();
-                            yield return new CodeInstruction(OpCodes.Ldarg_0);
-                            yield return new CodeInstruction(OpCodes.Callvirt, GetComponentMethod.MakeGenericMethod(typeof(ConstructionObstacle)));
-                            yield return new CodeInstruction(OpCodes.Brtrue_S, nextFromConstructionLabel);
-
-                            var nextFromImmuneLabel = generator.DefineLabel();
-                            yield return new CodeInstruction(OpCodes.Ldarg_0);
-                            yield return new CodeInstruction(OpCodes.Callvirt, GetComponentMethod.MakeGenericMethod(typeof(ImmuneToPropulsioncannon)));
-                            yield return new CodeInstruction(OpCodes.Brtrue_S, nextFromImmuneLabel);
-
-                            while (instructionsEnumerator.MoveNext() && !instructionsEnumerator.Current.labels.Contains(nullableNextFromOriginalLabel.Value))
-                            {
-                                yield return instructionsEnumerator.Current;
-                            }
-
-                            yield return instructionsEnumerator.Current.WithLabels(nextFromConstructionLabel, nextFromImmuneLabel);
                         }
-                    }
-                    else
-                    {
-                        yield return instructionsEnumerator.Current;
+
+                        yield return instructionsEnumerator.Current.WithLabels(onConstructionObstacleLabel, onImmuneToLabel);
                     }
                 }
-            }
-            else
-            {
-                foreach (var instruction in instructions)
+                else
                 {
-                    yield return instruction;
+                    yield return instructionsEnumerator.Current;
                 }
             }
         }
