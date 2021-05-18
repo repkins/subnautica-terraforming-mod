@@ -107,6 +107,11 @@
     <Compile Include="WorldStreaming\OctreeExtensions.cs" />
     <Compile Include="WorldStreaming\OctreePatches\ReadPatch.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\mod.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
