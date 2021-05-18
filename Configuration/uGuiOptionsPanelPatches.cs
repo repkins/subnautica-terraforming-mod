@@ -49,17 +49,17 @@ namespace Terraforming.Configuration
                         new UnityAction<bool>(value => Config.Instance.habitantModulesPartialBurying = value)
                     );
 
-                    __instance.AddSliderOption(modsTabIndex, $"Space between terrain and module", Config.Instance.spaceBetweenTerrainHabitantModule,
+                    __instance.AddSliderOption(modsTabIndex, $"Terrain vs module space", Config.Instance.spaceBetweenTerrainHabitantModule,
                         0.0f, 10.0f,
                         DefaultConfig.spaceBetweenTerrainHabitantModule,
                         new UnityAction<float>(value => Config.Instance.spaceBetweenTerrainHabitantModule = value)
                     );
 
-                    __instance.AddToggleOption(modsTabIndex, $"Propulsion cannon terrain impact", Config.Instance.terrainImpactWithPropulsionCannon,
+                    __instance.AddToggleOption(modsTabIndex, $"Repulsion terrain impact", Config.Instance.terrainImpactWithPropulsionCannon,
                         new UnityAction<bool>(value => Config.Instance.terrainImpactWithPropulsionCannon = value)
                     );
 
-                    __instance.AddToggleOption(modsTabIndex, $"Destroy obstacles on construction", Config.Instance.destroyLargerObstaclesOnConstruction,
+                    __instance.AddToggleOption(modsTabIndex, $"Destroy obstacles", Config.Instance.destroyLargerObstaclesOnConstruction,
                         new UnityAction<bool>(value => Config.Instance.destroyLargerObstaclesOnConstruction = value)
                     );
                 }
