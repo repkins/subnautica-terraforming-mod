@@ -43,12 +43,12 @@ namespace Terraforming.Configuration
 
                     __instance.AddToggleOption(modsTabIndex, $"Rebuilding messages", Config.Instance.rebuildMessages,
                         new UnityAction<bool>(value => Config.Instance.rebuildMessages = value),
-                        $"Shows terrain rebuilding message while terrain rebuilding is in progress"
+                        $"Shows terrain rebuilding message while terrain rebuilding is in progress. Enabled by default."
                     );
 
                     __instance.AddToggleOption(modsTabIndex, $"Habitant modules burying", Config.Instance.habitantModulesPartialBurying,
                         new UnityAction<bool>(value => Config.Instance.habitantModulesPartialBurying = value),
-                        $"Allows habitat burying into terrain and adjusts overlapping terrain around them"
+                        $"Allows habitat burying into terrain and adjusts overlapping terrain around them. Enabled by default."
                     );
 
                     __instance.AddSliderOption(modsTabIndex, $"Space between terrain and module", Config.Instance.spaceBetweenTerrainHabitantModule,
@@ -57,17 +57,17 @@ namespace Terraforming.Configuration
                         0.5f,
                         new UnityAction<float>(value => Config.Instance.spaceBetweenTerrainHabitantModule = value),
                         SliderLabelMode.Float,
-                        "0"
+                        "0.0"
                     );
 
                     __instance.AddToggleOption(modsTabIndex, $"Propulsion cannon terrain impact", Config.Instance.terrainImpactWithPropulsionCannon,
                         new UnityAction<bool>(value => Config.Instance.terrainImpactWithPropulsionCannon = value),
-                        $"Causes the repulsion cannon to remove small portion of terrain after \"shooting\" pulse to spot"
+                        $"Causes the repulsion cannon to remove small portion of terrain after \"shooting\" pulse to spot. Enabled by default."
                     );
 
                     __instance.AddToggleOption(modsTabIndex, $"Destroy obstacles on construction", Config.Instance.destroyLargerObstaclesOnConstruction,
                         new UnityAction<bool>(value => Config.Instance.destroyLargerObstaclesOnConstruction = value),
-                        $"Disables restrictions of overlapping larger objects with placable habitat module. Destroys them when construction of module finishes."
+                        $"Disables restrictions of overlapping larger objects with placable habitat module. Destroys them when construction of module finishes. Enabled by default."
                     );
                 }
             }
