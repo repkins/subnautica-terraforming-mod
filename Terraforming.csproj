@@ -109,7 +109,7 @@
     <Compile Include="WorldStreaming\OctreePatches\ReadPatch.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\mod.json">
+    <None Include="mod.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
