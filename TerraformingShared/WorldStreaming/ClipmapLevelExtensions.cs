@@ -15,7 +15,7 @@ namespace Terraforming.WorldStreaming
 		private const string rebuildingTerrainMsg = "Rebuilding terrain area...";
 
 		private static Dictionary<int, int> remainingCellCount = new Dictionary<int, int>();
-		private static Dictionary<int, Dictionary<Int3, ClipmapChunk>> clipmapChunks = new Dictionary<int, Dictionary<Int3, ClipmapChunk>>();
+		private static Dictionary<int, Dictionary<Int3, ClipmapChunk>> nullableClipmapChunks = new Dictionary<int, Dictionary<Int3, ClipmapChunk>>();
 
         private static ErrorMessage._Message rebuildingMessage = null;
         public static bool isMeshesRebuilding = false;
@@ -39,12 +39,12 @@ namespace Terraforming.WorldStreaming
 			}
 
 			remainingCellCount[clipmapLevel.id] += processingCells.Count;
-			if (!clipmapChunks.ContainsKey(clipmapLevel.id))
+			if (!nullableClipmapChunks.ContainsKey(clipmapLevel.id))
 			{
-				clipmapChunks[clipmapLevel.id] = new Dictionary<Int3, ClipmapChunk>();
+				nullableClipmapChunks[clipmapLevel.id] = new Dictionary<Int3, ClipmapChunk>();
 			}
 
-			Logger.Info($"{clipmapLevel}: Setting remainingCellCount to {remainingCellCount[clipmapLevel.id]}");
+			Logger.Debug($"{clipmapLevel}: Setting remainingCellCount to {remainingCellCount[clipmapLevel.id]}");
 
 			foreach (var cell in processingCells)
 			{
@@ -52,17 +52,17 @@ namespace Terraforming.WorldStreaming
 			}
 		}
 
-		public static void OnEndBuildLayers(this ClipmapLevel clipmapLevel, ClipmapCell clipmapCell, ClipmapChunk clipmapChunk)
+		public static void OnEndBuildLayers(this ClipmapLevel clipmapLevel, ClipmapCell clipmapCell, ClipmapChunk nullableClipmapChunk)
 		{
-			clipmapChunks[clipmapLevel.id][clipmapCell.id] = clipmapChunk;
+			nullableClipmapChunks[clipmapLevel.id][clipmapCell.id] = nullableClipmapChunk;
 
 			remainingCellCount[clipmapLevel.id]--;
 			Logger.Debug($"Decrementing remainingCellCount to {remainingCellCount[clipmapLevel.id]}");
 
 			if (remainingCellCount[clipmapLevel.id] <= 0)
 			{
-				clipmapLevel.SwapChunks(clipmapChunks[clipmapLevel.id]);
-				clipmapChunks[clipmapLevel.id].Clear();
+				clipmapLevel.SwapChunks(nullableClipmapChunks[clipmapLevel.id]);
+				nullableClipmapChunks[clipmapLevel.id].Clear();
 
 				if (remainingCellCount.All((levelCountPair) => levelCountPair.Value <= 0))
 				{

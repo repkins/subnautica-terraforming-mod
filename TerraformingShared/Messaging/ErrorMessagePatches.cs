@@ -9,7 +9,7 @@ namespace Terraforming.Messaging.ErrorMessagePatches
 {
     [HarmonyPatch(typeof(ErrorMessage))]
     [HarmonyPatch("ReleaseEntry")]
-    static class ReleaseEntryPatch
+    static class ErrorMessagePatches
     {
         static void Prefix()
         {

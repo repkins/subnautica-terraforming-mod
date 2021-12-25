@@ -81,30 +81,14 @@
     <Compile Include="Configuration\uGuiOptionsPanelPatches.cs" />
     <Compile Include="Tools\BuilderPatches\GetObstaclesPatch.cs" />
     <Compile Include="Tools\BuilderPatches\CanDestroyObjectPatch.cs" />
-    <Compile Include="Tools\ConstructableBasePatches\SetStatePatch.cs" />
-    <Compile Include="Tools\PlayerToolExtensions.cs" />
     <Compile Include="Tools\RepulsionCannonPatches\OnToolUseAnimPatch.cs" />
-    <Compile Include="Tools\TerraformerExtensions.cs" />
     <Compile Include="Tools\TerraformerPatches\UpdatePatch.cs" />
     <Compile Include="Messaging\ErrorMessageExtensions.cs" />
-    <Compile Include="Messaging\ErrorMessagePatches\ReleaseEntryPatch.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="WorldLegacyStreaming\LargeWorldStreamerExtensions.cs" />
-    <Compile Include="WorldLegacyStreaming\LargeWorldStreamerPatches\OnConsoleCommand_dig_Patch.cs" />
-    <Compile Include="WorldLegacyStreaming\LargeWorldStreamerPatches\PerformBoxEditPatch.cs" />
-    <Compile Include="WorldLegacyStreaming\LargeWorldStreamerPatches\PerformVoxelEditPatch.cs" />
-    <Compile Include="Logger.cs" />
     <Compile Include="MainPatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SaveLoad\SaveLoadManagerPatches\SaveToTemporaryStorageAsyncPatch.cs" />
-    <Compile Include="WorldStreaming\BatchOctreesExtensions.cs" />
-    <Compile Include="WorldStreaming\BatchOctreesPatches\BeginUnloadingPatch.cs" />
-    <Compile Include="WorldStreaming\BatchOctreesStreamerExtensions.cs" />
-    <Compile Include="WorldStreaming\BatchOctreesStreamerPatches\GetPathPatch.cs" />
     <Compile Include="WorldStreaming\ClipmapCellExtensions.cs" />
     <Compile Include="WorldStreaming\ClipmapCellPatches\BeginBuildLayersPatch.cs" />
-    <Compile Include="WorldStreaming\ClipmapLevelExtensions.cs" />
-    <Compile Include="WorldStreaming\ClipmapStreamerExtensions.cs" />
     <Compile Include="WorldStreaming\OctreeExtensions.cs" />
     <Compile Include="WorldStreaming\OctreePatches\ReadPatch.cs" />
   </ItemGroup>
@@ -113,6 +97,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="SaveLoad\" />
+    <Folder Include="WorldLegacyStreaming\" />
+  </ItemGroup>
+  <Import Project="..\TerraformingShared\TerraformingShared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

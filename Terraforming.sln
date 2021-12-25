@@ -7,7 +7,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerraformingSN1", "Terrafor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerraformingBZ", "TerraformingBZ\TerraformingBZ.csproj", "{776E7253-AEE5-4A73-9B72-27DA5CBF728E}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "TerraformingShared", "TerraformingShared\TerraformingShared.shproj", "{4C313643-6C44-4BDF-B7BE-2650BB4808E5}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		TerraformingShared\TerraformingShared.projitems*{1916359a-53f6-4bff-a4be-27dd5d3bc983}*SharedItemsImports = 4
+		TerraformingShared\TerraformingShared.projitems*{4c313643-6c44-4bdf-b7be-2650bb4808e5}*SharedItemsImports = 13
+		TerraformingShared\TerraformingShared.projitems*{776e7253-aee5-4a73-9b72-27da5cbf728e}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

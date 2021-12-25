@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>4c313643-6c44-4bdf-b7be-2650bb4808e5</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>TerraformingShared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messaging\ErrorMessagePatches.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SaveLoad\SaveLoadManagerPatches.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tools\ConstructableBasePatches.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tools\PlayerToolExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tools\TerraformerExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WorldLegacyStreaming\LargeWorldStreamerExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WorldLegacyStreaming\LargeWorldStreamerPatches.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\BatchOctreesExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\BatchOctreesPatches.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\BatchOctreesStreamerExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\BatchOctreesStreamerPatches.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\ClipmapLevelExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\ClipmapStreamerExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Messaging\" />
+  </ItemGroup>
+</Project>
