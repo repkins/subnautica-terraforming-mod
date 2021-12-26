@@ -45,11 +45,13 @@ namespace Terraforming.Tools.TerraformerPatches
             {
                 __state = true;
 
+#if BelowZero
                 if (__instance.type == 14)
                 {
                     Logger.Warning($"Terraformer.type uses undefined material type 14. Resetting to 1");
                     __instance.type = 1;
                 }
+#endif
             }
 
             return true;

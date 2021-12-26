@@ -7,7 +7,10 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+
+#if BelowZero
 using UnityEngine.Rendering;
+#endif
 
 namespace Terraforming.Tools.BuilderPatches
 {
@@ -40,10 +43,12 @@ namespace Terraforming.Tools.BuilderPatches
                         yield return new CodeInstruction(OpCodes.Callvirt, GetComponentMethod.MakeGenericMethod(typeof(ConstructionObstacle)));
                         yield return new CodeInstruction(OpCodes.Brtrue_S, onConstructionObstacleLabel);
 
+#if !BelowZero
                         var onImmuneToLabel = generator.DefineLabel();
                         yield return new CodeInstruction(OpCodes.Ldarg_0);
                         yield return new CodeInstruction(OpCodes.Callvirt, GetComponentMethod.MakeGenericMethod(typeof(ImmuneToPropulsioncannon)));
                         yield return new CodeInstruction(OpCodes.Brtrue_S, onImmuneToLabel);
+#endif
 
                         if (instructionsEnumerator.MoveNext())
                         {
@@ -55,8 +60,11 @@ namespace Terraforming.Tools.BuilderPatches
                             yield return instructionsEnumerator.Current;
                         }
 
+#if BelowZero
                         yield return instructionsEnumerator.Current.WithLabels(onConstructionObstacleLabel);
+#else
                         yield return instructionsEnumerator.Current.WithLabels(onConstructionObstacleLabel, onImmuneToLabel);
+#endif
                     }
                 }
                 else
@@ -77,13 +85,21 @@ namespace Terraforming.Tools.BuilderPatches
             {
                 results.RemoveAll((gameObject) => Builder.IsObstacle(gameObject.GetComponent<Collider>()));
             }
+
+#if !BelowZero
+            if (Config.Instance.destroyLargerObstaclesOnConstruction)
+            {
+                results.RemoveAll((gameObject) => gameObject.GetComponent<ConstructionObstacle>() != null);
+                results.RemoveAll((gameObject) => gameObject.GetComponent<ImmuneToPropulsioncannon>() != null);
+            }
+#endif
         }
     }
 
+#if BelowZero
     [HarmonyPatch(typeof(Builder))]
     [HarmonyPatch(nameof(Builder.UpdateAllowed))]
     static class UpdateAllowedPatch
-            if (Config.Instance.destroyLargerObstaclesOnConstruction)
     {
         static Material destroyableObstacleMat = null;
 
@@ -168,8 +184,6 @@ namespace Terraforming.Tools.BuilderPatches
                             new CodeInstruction(OpCodes.Stloc_1)
                         );
                     }
-                results.RemoveAll((gameObject) => gameObject.GetComponent<ConstructionObstacle>() != null);
-                results.RemoveAll((gameObject) => gameObject.GetComponent<ImmuneToPropulsioncannon>() != null);
                 }
             }
         }
@@ -272,4 +286,5 @@ namespace Terraforming.Tools.BuilderPatches
             return go.GetComponent<ConstructionObstacle>() != null;
         }
     }
+#endif
 }

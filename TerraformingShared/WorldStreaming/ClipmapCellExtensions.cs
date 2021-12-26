@@ -31,7 +31,6 @@ namespace Terraforming.WorldStreaming
             Logger.Debug($"{clipmapCell}: Begin");
 
             var clipmapStreamer = clipmapCell.streamer;
-            var clipmapStreamer = clipmapCell.level.streamer;
             var octreesStreamer = clipmapStreamer.host.GetOctreesStreamer(clipmapCell.level.id);
 
             meshBuilder = clipmapStreamer.meshBuilderPool.Get();
@@ -45,14 +44,17 @@ namespace Terraforming.WorldStreaming
         {
             var clipmapCell = (ClipmapCell)owner;
             var meshBuilder = (MeshBuilder)state;
-            clipmapCell.RebuildLayers(meshBuilder, out var clipmapChunk);
 
+#if BelowZero
             CoroutineHost.StartCoroutine(clipmapCell.RebuildLayersAsync(meshBuilder));
+#else
+            clipmapCell.RebuildLayers(meshBuilder, out var clipmapChunk);
             clipmapCell.level.OnEndBuildLayers(clipmapCell, clipmapChunk);
+#endif
         }
 
+#if BelowZero
         public static IEnumerator RebuildLayersAsync(this ClipmapCell clipmapCell, MeshBuilder meshBuilder)
-        public static void RebuildLayers(this ClipmapCell clipmapCell, MeshBuilder meshBuilder, out ClipmapChunk clipmapChunk)
         {
             Logger.Debug($"{clipmapCell}: Begin");
 
@@ -62,20 +64,30 @@ namespace Terraforming.WorldStreaming
                 var host = clipmapCell.level.streamer.host;
                 nullableClipmapChunk = meshBuilder.DoFinalizePart(host.chunkRoot, host.terrainPoolManager);
                 clipmapCell.streamer.meshBuilderPool.Return(meshBuilder);
-            clipmapChunk = meshBuilder.DoFinalizePart(host.chunkRoot, host.chunkPrefab, host.chunkLayerPrefab);
 
                 yield return clipmapCell.ActivateChunkAndCollider(nullableClipmapChunk);
             }
             clipmapCell.level.OnEndBuildLayers(clipmapCell, nullableClipmapChunk);
-            clipmapCell.level.streamer.meshBuilderPool.Return(meshBuilder);
 
             Logger.Debug($"{clipmapCell}: End");
 
             yield break;
         }
+#else
+        public static void RebuildLayers(this ClipmapCell clipmapCell, MeshBuilder meshBuilder, out ClipmapChunk clipmapChunk)
+        {
+            Logger.Debug($"{clipmapCell}: Begin");
+
+            var host = clipmapCell.level.streamer.host;
+            clipmapChunk = meshBuilder.DoFinalizePart(host.chunkRoot, host.chunkPrefab, host.chunkLayerPrefab);
+
+            clipmapCell.level.streamer.meshBuilderPool.Return(meshBuilder);
+
+            Logger.Debug($"{clipmapCell}: End");
+        }
+#endif
 
         public static void SwapChunk(this ClipmapCell clipmapCell, ClipmapChunk nullableClipmapChunk)
-        public static void SwapChunk(this ClipmapCell clipmapCell, ClipmapChunk clipmapChunk)
         {
             if (clipmapCell.IsVisible())
             {
@@ -84,25 +96,27 @@ namespace Terraforming.WorldStreaming
                     Logger.Debug($"{clipmapCell}: Showing new chunk");
                     nullableClipmapChunk.Show();
                 }
-                clipmapChunk.Show();
             }
 
             var oldClipmapChunk = clipmapCell.chunk;
             if (oldClipmapChunk)
             {
+#if BelowZero
                 if (!clipmapCell.streamer.host.terrainPoolManager.meshPoolingEnabled)
                 {
                     MeshBuilder.DestroyMeshes(oldClipmapChunk);
-
+                }
+                clipmapCell.ReturnChunkToPool(oldClipmapChunk);
+#else
+                MeshBuilder.DestroyMeshes(oldClipmapChunk);
                 if (oldClipmapChunk.gameObject)
                 {
                     UnityEngine.Object.Destroy(oldClipmapChunk.gameObject);
                 }
-                clipmapCell.ReturnChunkToPool(oldClipmapChunk);
+#endif
             }
 
             clipmapCell.chunk = nullableClipmapChunk;
-            clipmapCell.chunk = clipmapChunk;
         }
 
         public static bool IsVisible(this ClipmapCell clipmapCell)

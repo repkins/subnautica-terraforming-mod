@@ -1,11 +1,15 @@
-﻿using Newtonsoft.Json;
-using Oculus.Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+
+#if BelowZero
+using Newtonsoft.Json;
+#else
+using Oculus.Newtonsoft.Json;
+#endif
 
 namespace Terraforming
 {

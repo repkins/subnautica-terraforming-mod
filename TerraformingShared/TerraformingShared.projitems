@@ -34,6 +34,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\ClipmapLevelExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\ClipmapStreamerExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\OctreeExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\OctreePatches.cs" />
   </ItemGroup>
 </Project>
