@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerraformingSN1", "Terrafor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerraformingBZ", "TerraformingBZ\TerraformingBZ.csproj", "{776E7253-AEE5-4A73-9B72-27DA5CBF728E}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "TerraformingShared", "TerraformingShared\TerraformingShared.shproj", "{4C313643-6C44-4BDF-B7BE-2650BB4808E5}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Terraforming", "TerraformingShared\Terraforming.shproj", "{4C313643-6C44-4BDF-B7BE-2650BB4808E5}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
