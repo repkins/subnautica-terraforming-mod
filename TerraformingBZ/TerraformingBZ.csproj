@@ -83,11 +83,9 @@
   <ItemGroup>
     <Compile Include="Config.cs" />
     <Compile Include="Configuration\uGuiOptionsPanelPatches.cs" />
-    <Compile Include="Tools\BuilderPatches\GetObstaclesPatch.cs" />
-    <Compile Include="Tools\BuilderPatches\CanDestroyObjectPatch.cs" />
-    <Compile Include="Tools\BuilderPatches\UpdateAllowedPatch.cs" />
-    <Compile Include="Tools\RepulsionCannonPatches\OnToolUseAnimPatch.cs" />
-    <Compile Include="Tools\TerraformerPatches\UpdatePatch.cs" />
+    <Compile Include="Tools\BuilderPatches.cs" />
+    <Compile Include="Tools\RepulsionCannonPatches.cs" />
+    <Compile Include="Tools\TerraformerPatches.cs" />
     <Compile Include="Messaging\ErrorMessageExtensions.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="MainPatcher.cs" />
@@ -98,8 +96,6 @@
   <ItemGroup>
     <Folder Include="SaveLoad\" />
     <Folder Include="WorldLegacyStreaming\" />
-    <Folder Include="WorldStreaming\ClipmapCellPatches\" />
-    <Folder Include="WorldStreaming\OctreePatches\" />
   </ItemGroup>
   <Import Project="..\TerraformingShared\TerraformingShared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
