@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Terraforming.WorldStreaming;
+using UnityEngine;
 using WorldStreaming;
 
 namespace Terraforming.Tools.RepulsionCannonPatches
@@ -19,8 +20,16 @@ namespace Terraforming.Tools.RepulsionCannonPatches
                 var energyMixin = __instance.GetEnergyMixin();
                 if (energyMixin.charge > 0f)
                 {
-                    if (UWE.Utils.TraceHitComponentNormal<ClipmapChunk>(Player.main.gameObject, 35f, 1f, out _, out var position2))
+                    GameObject closestObject = null;
+                    var closestPoint = default(Vector3);
+
+                    if (UWE.Utils.TraceFPSTargetPosition(Player.main.gameObject, 35f, ref closestObject, ref closestPoint, false))
                     {
+                        if (closestObject && closestObject.GetComponent<TerrainChunkPiece>() != null)
+                    if (UWE.Utils.TraceHitComponentNormal<ClipmapChunk>(Player.main.gameObject, 35f, 1f, out _, out var position2))
+                        {
+                            Utils.Terraform(closestPoint, 1f);
+                        }
                         Utils.Terraform(position2, 1f);
                     }
                 }

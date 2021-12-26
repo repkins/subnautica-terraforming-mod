@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using TMPro;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
@@ -67,6 +68,7 @@ namespace Terraforming.Messaging
             main.offsetY = offsetY - offsetToRemove;
         }
 
+        public static TextMeshProUGUI GetMessageEntry(ErrorMessage._Message message)
         public static Text GetMessageEntry(ErrorMessage._Message message)
         {
             return message.entry;

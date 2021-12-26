@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Unity.Collections;
 using UWE;
 using WorldStreaming;
 
@@ -20,8 +21,8 @@ namespace Terraforming.WorldStreaming
 		{
 			int octreeDataLength = 0;
 
-            var octreeData = octree.data;
-            if (octreeData != null)
+			var octreeData = octree.data;
+			if (octreeData != null)
 			{
 				octreeDataLength = octreeData.Length;
 			}
@@ -30,27 +31,29 @@ namespace Terraforming.WorldStreaming
 
 			if (octreeData != null)
 			{
+				binaryWriter.Write(octreeData.ToArray());
 				binaryWriter.Write(octreeData.Array, octreeData.Offset, octreeDataLength);
 			}
 		}
 
+		public static NativeArray<byte> GetData(this Octree octree)
 		public static LinearArrayHeap<byte>.Alloc GetData(this Octree octree)
-        {
-            return octree.data;
-        }
+		{
+			return octree.data;
+		}
 
 		public static Int3 GetId(this Octree octree)
-        {
-            return octree.id;
-        }
+		{
+			return octree.id;
+		}
 
 		private static VoxelandData.OctNode ToVLOctNodeRecursive(this Octree octree, int nid)
 		{
 			CompactOctree.Node node = octree.GetNode(nid);
 			VoxelandData.OctNode octNode = node.ToVLNode();
 
-            if (!octree.IsLeaf(nid))
-            {
+			if (!octree.IsLeaf(nid))
+			{
 				octNode.childNodes = VoxelandData.OctNode.childNodesPool.Get();
 				for (int i = 0; i < 8; i++)
 				{
@@ -60,32 +63,34 @@ namespace Terraforming.WorldStreaming
 			return octNode;
 		}
 
-        private static CompactOctree.Node GetNode(this Octree octree, int id)
-        {
-            return new CompactOctree.Node(octree.GetType(id), octree.GetDensity(id), Convert.ToUInt16(octree.GetFirstChildId(id)));
-        }
+		private static CompactOctree.Node GetNode(this Octree octree, int id)
+		{
+			return new CompactOctree.Node(octree.GetType(id), octree.GetDensity(id), Convert.ToUInt16(octree.GetFirstChildId(id)));
+		}
 
-        private static void SetNode(this Octree octree, int id, byte type, byte density, ushort firstChildId)
-        {
-            var octreeData = octree.data;
+		private static void SetNode(this Octree octree, int id, byte type, byte density, ushort firstChildId)
+		{
+			var octreeData = octree.data;
 
-            int num = id * 4;
+			int num = id * 4;
 			octreeData[num] = type;
 			octreeData[num + 1] = density;
 			octreeData[num + 2] = Convert.ToByte(firstChildId & 255);
 			octreeData[num + 3] = Convert.ToByte(firstChildId >> 8);
 		}
 
+		public static void Set(this Octree octree, VoxelandData.OctNode root, SplitNativeArrayPool<byte> allocator)
 		public static void Set(this Octree octree, VoxelandData.OctNode root, LinearArrayHeap<byte> allocator)
 		{
 			int num = root.CountNodes() * 4;
 
 			octree.Clear(allocator);
+			var octreeData = allocator.Get(num);
 			var octreeData = allocator.Allocate(num);
 
-            octree.data = octreeData;
+			octree.data = octreeData;
 
-            ushort num2 = 1;
+			ushort num2 = 1;
 			octree.SetInternal(root, 0, ref num2);
 		}
 
