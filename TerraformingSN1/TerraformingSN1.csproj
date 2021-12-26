@@ -77,30 +77,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config.cs" />
-    <Compile Include="Configuration\uGuiOptionsPanelPatches.cs" />
-    <Compile Include="Tools\BuilderPatches\GetObstaclesPatch.cs" />
-    <Compile Include="Tools\BuilderPatches\CanDestroyObjectPatch.cs" />
-    <Compile Include="Tools\RepulsionCannonPatches\OnToolUseAnimPatch.cs" />
-    <Compile Include="Tools\TerraformerPatches\UpdatePatch.cs" />
-    <Compile Include="Messaging\ErrorMessageExtensions.cs" />
-    <Compile Include="Utils.cs" />
-    <Compile Include="MainPatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WorldStreaming\ClipmapCellExtensions.cs" />
-    <Compile Include="WorldStreaming\ClipmapCellPatches\BeginBuildLayersPatch.cs" />
-    <Compile Include="WorldStreaming\OctreeExtensions.cs" />
-    <Compile Include="WorldStreaming\OctreePatches\ReadPatch.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SaveLoad\" />
-    <Folder Include="WorldLegacyStreaming\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="..\TerraformingShared\TerraformingShared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

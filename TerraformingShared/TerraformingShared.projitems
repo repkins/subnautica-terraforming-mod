@@ -9,22 +9,31 @@
     <Import_RootNamespace>TerraformingShared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\uGuiOptionsPanelPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MainPatcher.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messaging\ErrorMessageExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\ErrorMessagePatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SaveLoad\SaveLoadManagerPatches.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tools\BuilderPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\ConstructableBasePatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\PlayerToolExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tools\RepulsionCannonPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\TerraformerExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tools\TerraformerPatches.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorldLegacyStreaming\LargeWorldStreamerExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorldLegacyStreaming\LargeWorldStreamerPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\BatchOctreesExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\BatchOctreesPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\BatchOctreesStreamerExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\BatchOctreesStreamerPatches.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\ClipmapCellExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\ClipmapCellPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\ClipmapLevelExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\ClipmapStreamerExtensions.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Messaging\" />
+    <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\OctreeExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\OctreePatches.cs" />
   </ItemGroup>
 </Project>
