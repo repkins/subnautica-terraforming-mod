@@ -26,19 +26,19 @@ namespace Terraforming.WorldLegacyStreaming.LargeWorldStreamerPatches
     {
         static bool Prefix(LargeWorldStreamer __instance, Bounds bb, Quaternion rot, bool isAdd = false, byte type = 1)
         {
-            Bounds aaBB = bb;
+            Bounds minMaxedBb = bb;
 
             Vector3 min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
             Vector3 max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
 
             OrientedBounds.MinMaxBounds(OrientedBounds.TransformMatrix(bb.center, rot), Vector3.zero, bb.extents, ref min, ref max);
 
-            aaBB.SetMinMax(min, max);
+            minMaxedBb.SetMinMax(min, max);
 
             Quaternion invRot = Quaternion.Inverse(rot);
             Vector3 c = bb.center;
 
-            __instance.PerformVoxelEdit(aaBB, (Vector3 wsPos) => VoxelandMisc.SignedDistToBox(bb, c + invRot * (wsPos - c)), isAdd, type);
+            __instance.PerformVoxelEdit(minMaxedBb, (Vector3 wsPos) => VoxelandMisc.SignedDistToBox(bb, c + invRot * (wsPos - c)), isAdd, type);
 
             return false;
         }
@@ -51,7 +51,8 @@ namespace Terraforming.WorldLegacyStreaming.LargeWorldStreamerPatches
     {
         static bool Prefix(LargeWorldStreamer __instance, Int3.Bounds blockBounds, LargeWorldStreamer.DistanceField df, bool isAdd = false, byte type = 1)
         {
-            __instance.PerformOctreesEdit(blockBounds, df, isAdd, type);
+            __instance.streamerV2.octreesStreamer.PerformOctreesEdit(blockBounds, df, isAdd, type);
+            __instance.streamerV2.clipmapStreamer.AddToRangesEdited(blockBounds);
 
             return false;
         }
