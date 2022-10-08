@@ -8,8 +8,8 @@ using UnityEngine;
 namespace Terraforming.Messaging.ErrorMessagePatches
 {
     [HarmonyPatch(typeof(ErrorMessage))]
-    [HarmonyPatch("ReleaseEntry")]
-    static class ErrorMessagePatches
+    [HarmonyPatch(nameof(ErrorMessage.ReleaseEntry))]
+    static class ReleaseEntryPatch
     {
         static void Prefix()
         {

@@ -43,7 +43,12 @@ namespace Terraforming.Tools.ConstructableBasePatches
                         foreach (var orientedBounds in orientedBoundsList)
                         {
                             var sizeExpand = Config.Instance.spaceBetweenTerrainHabitantModule;
-                            LargeWorldStreamer.main.PerformBoxEdit(new Bounds(orientedBounds.position, orientedBounds.size + new Vector3(sizeExpand, sizeExpand, sizeExpand)), orientedBounds.rotation, false, 2);
+#if BelowZero
+                            byte matType = 1;
+#else
+                            byte matType = 2;
+#endif
+                            LargeWorldStreamer.main.PerformBoxEdit(new Bounds(orientedBounds.position, orientedBounds.size + new Vector3(sizeExpand, sizeExpand, sizeExpand)), orientedBounds.rotation, false, matType);
                             Logger.Debug($"PerformBoxEdit() called using oriented bounds: {orientedBounds}");
                         }
 

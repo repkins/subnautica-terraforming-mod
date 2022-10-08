@@ -7,6 +7,7 @@ using WorldStreaming;
 
 namespace Terraforming.WorldStreaming.ClipmapCellPatches
 {
+#if !BelowZero
     [HarmonyPatch(typeof(ClipmapCell))]
     [HarmonyPatch("BeginBuildLayers")]
     [HarmonyPatch(new Type[] { typeof(MeshBuilder) })]
@@ -23,4 +24,5 @@ namespace Terraforming.WorldStreaming.ClipmapCellPatches
             }
         }
     }
+#endif
 }
