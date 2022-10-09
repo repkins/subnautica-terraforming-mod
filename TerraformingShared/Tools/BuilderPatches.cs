@@ -144,11 +144,11 @@ namespace Terraforming.Tools.BuilderPatches
                 codeCursor.RemoveInstructions(7);
                 codeCursor.AddLabels(labels);
 
-                codeCursor.MatchForward(true,
+                codeCursor.MatchForward(useEnd: true,
                     new CodeMatch(OpCodes.Ldloc_3),
                     new CodeMatch(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(List<GameObject>), nameof(List<GameObject>.Count))),
                     new CodeMatch(OpCodes.Ldc_I4_0),
-                    new CodeMatch(OpCodes.Ble)
+                    new CodeMatch(OpCodes.Ble)          // <--
                 );
 
                 if (codeCursor.IsValid)

@@ -17,7 +17,7 @@ namespace Terraforming
     {
         public static readonly bool rebuildMessages = true;
         public static readonly bool habitantModulesPartialBurying = true;
-        public static readonly bool terrainImpactWithPropulsionCannon = true;
+        public static readonly bool terrainImpactWithRepulsionCannon = true;
         public static readonly float spaceBetweenTerrainHabitantModule = 1.0f;
         public static readonly bool destroyLargerObstaclesOnConstruction = true;
     }
@@ -26,7 +26,7 @@ namespace Terraforming
     {
         public bool rebuildMessages = DefaultConfig.rebuildMessages;
         public bool habitantModulesPartialBurying = DefaultConfig.habitantModulesPartialBurying;
-        public bool terrainImpactWithPropulsionCannon = DefaultConfig.terrainImpactWithPropulsionCannon;
+        public bool terrainImpactWithRepulsionCannon = DefaultConfig.terrainImpactWithRepulsionCannon;
         public float spaceBetweenTerrainHabitantModule = DefaultConfig.spaceBetweenTerrainHabitantModule;
         public bool destroyLargerObstaclesOnConstruction = DefaultConfig.destroyLargerObstaclesOnConstruction;
 

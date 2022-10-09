@@ -10,7 +10,7 @@ namespace Terraforming.Configuration
 {
     public static class uGuiOptionsPanelPatches
     {
-        static string modsLabel = $"Mods";
+        static readonly string modsLabel = $"Mods";
 
         static int? nullableModsTabIndex;
 
@@ -58,11 +58,12 @@ namespace Terraforming.Configuration
                         0.5f,
                         new UnityAction<float>(value => Config.Instance.spaceBetweenTerrainHabitantModule = value),
                         SliderLabelMode.Float,
-                        "0.0"
+                        "0.0",
+                        $"Allows to adjust space between terrain surface and base compartment. High value means more space, low value means less space. Defaults to 1.0."
                     );
 
-                    __instance.AddToggleOption(modsTabIndex, $"Propulsion cannon terrain impact", Config.Instance.terrainImpactWithPropulsionCannon,
-                        new UnityAction<bool>(value => Config.Instance.terrainImpactWithPropulsionCannon = value),
+                    __instance.AddToggleOption(modsTabIndex, $"Repulsion cannon terrain impact", Config.Instance.terrainImpactWithRepulsionCannon,
+                        new UnityAction<bool>(value => Config.Instance.terrainImpactWithRepulsionCannon = value),
                         $"Causes the repulsion cannon to remove small portion of terrain after \"shooting\" pulse to spot. Enabled by default."
                     );
 
