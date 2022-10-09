@@ -17,6 +17,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\ErrorMessagePatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SaveLoad\SaveLoadManagerPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\BuilderPatches.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tools\BuilderToolPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\ConstructableBasePatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\PlayerToolExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\RepulsionCannonPatches.cs" />
