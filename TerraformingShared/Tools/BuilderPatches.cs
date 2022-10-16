@@ -35,9 +35,9 @@ namespace Terraforming.Tools.BuilderPatches
                         yield return new CodeInstruction(OpCodes.Brfalse_S, onDisabledDestroyingObstaclesLabel);
 
                         var onConstructionObstacleLabel = generator.DefineLabel();
-                        yield return new CodeInstruction(OpCodes.Ldarg_0);
+                        yield return new CodeInstruction(OpCodes.Ldarg_0);                                  // Load passed "go" object to get ConstructionObstacle component.
                         yield return new CodeInstruction(OpCodes.Callvirt, GetComponentMethod.MakeGenericMethod(typeof(ConstructionObstacle)));
-                        yield return new CodeInstruction(OpCodes.Brtrue_S, onConstructionObstacleLabel);
+                        yield return new CodeInstruction(OpCodes.Brtrue_S, onConstructionObstacleLabel);    // Redirect if there is ConstructionObstacle component.
 
 #if !BelowZero
                         var onImmuneToLabel = generator.DefineLabel();
@@ -79,6 +79,7 @@ namespace Terraforming.Tools.BuilderPatches
         {
             if (Config.Instance.habitantModulesPartialBurying)
             {
+                // Exclude terrain obstacles so they gets terraformed.
                 results.RemoveAll((gameObject) => Builder.IsObstacle(gameObject.GetComponent<Collider>()));
             }
 
@@ -116,21 +117,21 @@ namespace Terraforming.Tools.BuilderPatches
             codeCursor.Start();
             codeCursor.MatchForward(false,
                 new CodeMatch(OpCodes.Ldloc_1),
-                new CodeMatch(OpCodes.Ldloc_3),
+                new CodeMatch(OpCodes.Ldloc_3),     // Load "obstaclesList" variable into evaluation stack to get count of obstacles.
                 new CodeMatch(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(List<GameObject>), nameof(List<GameObject>.Count))),
                 new CodeMatch(OpCodes.Ldc_I4_0),
                 new CodeMatch(OpCodes.Ceq),
                 new CodeMatch(OpCodes.And),
-                new CodeMatch(OpCodes.Stloc_1)
+                new CodeMatch(OpCodes.Stloc_1)      // Assign result of bitwise operation to "hasObstacles" bool.
             );
 
             if (codeCursor.IsValid)
             {
                 var labels = codeCursor.Instruction.ExtractLabels();
 
-                // Make it to allow construction by clearing contruction obstacles for boolean result assignment
+                // Make it to allow construction by clearing contruction obstacles so "hasObstacles" would be false.
                 codeCursor.InsertAndAdvance(
-                    new CodeInstruction(OpCodes.Ldloc_3).WithLabels(labels),
+                    new CodeInstruction(OpCodes.Ldloc_3).WithLabels(labels),    // Load "obstaclesList" into evaluation stack to pass as argument.
                     new CodeInstruction(OpCodes.Call, AccessTools.Method($"{typeof(UpdateAllowedPatch)}:{nameof(ClearConstructionObstacles)}", new Type[] { typeof(List<GameObject>) }))
                 );
             }
