@@ -6,6 +6,8 @@ using Terraforming;
 using UnityEngine.Rendering;
 using UnityEngine;
 using System.Collections;
+using Valve.VR;
+using System.Linq;
 
 namespace TerraformingShared.Tools.BuilderToolPatches
 {
@@ -14,21 +16,16 @@ namespace TerraformingShared.Tools.BuilderToolPatches
     public static class UpdatePatch
     {
         public static bool storedEnabledDestroyingObstacles = Config.Instance.destroyLargerObstaclesOnConstruction;
-        static Material destroyableObstacleMat = null;
+
+        static readonly List<Renderer> obstacleRendererList = new List<Renderer>();
 
         static bool emptyPrevTarget = true;
 
         public static void Postfix()
         {
-            if (destroyableObstacleMat == null)
-            {
-                destroyableObstacleMat = new Material(Builder.builderObstacleMaterial);
-                destroyableObstacleMat.SetColor(ShaderPropertyID._Tint, Color.red);
-            }
-
             bool destroyToggled = false;
             bool configChanged = false;
-            if (GameInput.GetButtonDown(GameInput.Button.AltTool) || GameInput.GetButtonUp(GameInput.Button.AltTool))
+            if (!Builder.isPlacing && GameInput.GetButtonDown(GameInput.Button.AltTool) || GameInput.GetButtonUp(GameInput.Button.AltTool))
             {
                 Config.Instance.destroyLargerObstaclesOnConstruction = !Config.Instance.destroyLargerObstaclesOnConstruction;
                 destroyToggled = true;
@@ -55,7 +52,9 @@ namespace TerraformingShared.Tools.BuilderToolPatches
 
                     if (destroyToggled || configChanged || emptyPrevTarget)
                     {
-                        Builder.obstaclesBuffer.Clear();
+                        obstacleRendererList.ForEach(renderer => renderer.fadeAmount = 1f);
+                        obstacleRendererList.Clear();
+
                         if (Config.Instance.destroyLargerObstaclesOnConstruction)
                         {
                             HighlightDestroyableObstacles(constructableBase);
@@ -68,7 +67,9 @@ namespace TerraformingShared.Tools.BuilderToolPatches
 
             if (!isConstructableTarget)
             {
-                Builder.obstaclesBuffer.Clear();
+                obstacleRendererList.ForEach(renderer => renderer.fadeAmount = 1f);
+                obstacleRendererList.Clear();
+
                 emptyPrevTarget = true;
             }
         }
@@ -79,24 +80,11 @@ namespace TerraformingShared.Tools.BuilderToolPatches
             {
                 var obstacleList = obstacleListPool.list;
 
-                using (var constructableBoundsListPool = Pool<ListPool<ConstructableBounds>>.Get())
+                using (var orientedBoundsListPool = Pool<ListPool<OrientedBounds>>.Get())
                 {
-                    var constructableBoundsList = constructableBoundsListPool.list;
-                    constructableBase.GetComponentsInChildren(true, constructableBoundsList);
-
-                    using (var overlappedObjectsListPool = Pool<ListPool<GameObject>>.Get())
-                    {
-                        var overlappedObjectsList = overlappedObjectsListPool.list;
-
-                        foreach (var constructableBounds in constructableBoundsList)
-                        {
-                            var orientedBounds = OrientedBounds.ToWorldBounds(constructableBounds.transform, constructableBounds.bounds);
-                            overlappedObjectsList.Clear();
-                            Builder.GetOverlappedObjects(orientedBounds.position, orientedBounds.rotation, orientedBounds.extents, overlappedObjectsList);
-
-                            obstacleList.AddRange(overlappedObjectsList);
-                        }
-                    }
+                    var orientedBoundsList = orientedBoundsListPool.list;
+                    Builder.CacheBounds(constructableBase.gameObject.transform, constructableBase.gameObject, orientedBoundsList, false);
+                    Builder.GetObstacles(constructableBase.transform.position, constructableBase.transform.rotation, orientedBoundsList, null, obstacleList);
                 }
 
                 if (obstacleList.Count > 0)
@@ -107,12 +95,17 @@ namespace TerraformingShared.Tools.BuilderToolPatches
 
                         foreach (var obstacle in obstacleList)
                         {
-                            if (!(obstacle.GetComponent<BaseCell>() != null))
+                            if (!(obstacle.GetComponent<BaseCell>() != null) && Builder.CanDestroyObject(obstacle))
                             {
-                                Builder.sRenderers.Clear();
                                 obstacle.GetComponentsInChildren(Builder.sRenderers);
-                                foreach (var renderer in Builder.sRenderers)
+
+                                obstacleRendererList.AddRange(Builder.sRenderers);
+
+                                foreach (var renderer in obstacleRendererList)
                                 {
+                                    renderer.fadeAmount = .1f;
+
+                                    /*
                                     if (renderer.enabled && renderer.shadowCastingMode != ShadowCastingMode.ShadowsOnly && !(renderer is ParticleSystemRenderer))
                                     {
                                         renderer.GetSharedMaterials(materialList);
@@ -128,7 +121,7 @@ namespace TerraformingShared.Tools.BuilderToolPatches
                                                 Builder.obstaclesBuffer.DrawRenderer(renderer, destroyableObstacleMat, shaderPassNum);
                                             }
                                         }
-                                    }
+                                    }*/
                                 }
                             }
                         }
