@@ -6,26 +6,25 @@ using Terraforming;
 using UnityEngine.Rendering;
 using UnityEngine;
 using System.Collections;
-using Valve.VR;
 using System.Linq;
 
-namespace TerraformingShared.Tools.BuilderToolPatches
+namespace TerraformingShared.Tools
 {
     [HarmonyPatch(typeof(BuilderTool))]
-    [HarmonyPatch(nameof(BuilderTool.Update))]
-    public static class UpdatePatch
+    public static class BuilderToolPatches
     {
-        public static bool storedEnabledDestroyingObstacles = Config.Instance.destroyLargerObstaclesOnConstruction;
+        static bool storedEnabledDestroyingObstacles = Config.Instance.destroyLargerObstaclesOnConstruction;
 
         static readonly List<Renderer> obstacleRendererList = new List<Renderer>();
+        static GameObject prevTarget;
 
-        static bool emptyPrevTarget = true;
-
-        public static void Postfix()
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(BuilderTool.Update))]
+        public static void UpdateObstacleSettings()
         {
             bool destroyToggled = false;
             bool configChanged = false;
-            if (!Builder.isPlacing && GameInput.GetButtonDown(GameInput.Button.AltTool) || GameInput.GetButtonUp(GameInput.Button.AltTool))
+            if (GameInput.GetButtonDown(GameInput.Button.AltTool) || GameInput.GetButtonUp(GameInput.Button.AltTool))
             {
                 Config.Instance.destroyLargerObstaclesOnConstruction = !Config.Instance.destroyLargerObstaclesOnConstruction;
                 destroyToggled = true;
@@ -50,10 +49,9 @@ namespace TerraformingShared.Tools.BuilderToolPatches
                 {
                     isConstructableTarget = true;
 
-                    if (destroyToggled || configChanged || emptyPrevTarget)
+                    if (destroyToggled || configChanged || prevTarget != targetObject)
                     {
-                        obstacleRendererList.ForEach(renderer => renderer.fadeAmount = 1f);
-                        obstacleRendererList.Clear();
+                        RestoreHighlightedObstacles();
 
                         if (Config.Instance.destroyLargerObstaclesOnConstruction)
                         {
@@ -61,17 +59,43 @@ namespace TerraformingShared.Tools.BuilderToolPatches
                         }
                     }
 
-                    emptyPrevTarget = false;
+                    prevTarget = targetObject;
                 }
             }
 
-            if (!isConstructableTarget)
+            if (!isConstructableTarget || Builder.isPlacing)
             {
-                obstacleRendererList.ForEach(renderer => renderer.fadeAmount = 1f);
-                obstacleRendererList.Clear();
-
-                emptyPrevTarget = true;
+                RestoreHighlightedObstacles();
+                prevTarget = null;
             }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(BuilderTool.OnHover), new Type[] { typeof(Constructable) })]
+        public static void ShowObstaclesTooltip(Constructable constructable)
+        {
+            if (!constructable.constructed)
+            {
+                var enableText = "Enable Destroying Obstacles";
+                var disableText = "Disable Destroying Obstacles";
+
+                var storedDestroyingEnabled = storedEnabledDestroyingObstacles;
+
+                var obstaclesUseText = string.Format("{0} (Hold {1})", storedDestroyingEnabled ? disableText : enableText, uGUI.FormatButton(GameInput.Button.AltTool));
+
+                var handSubscriptText = HandReticle.main.textHandSubscript;
+                handSubscriptText = handSubscriptText.Insert(handSubscriptText.IndexOf(Environment.NewLine), string.Format(", {0}", obstaclesUseText));
+
+                HandReticle.main.SetTextRaw(HandReticle.TextType.HandSubscript, handSubscriptText);
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(BuilderTool.OnHolster))]
+        public static void OnHolster_Postfix()
+        {
+            RestoreHighlightedObstacles();
+            prevTarget = null;
         }
 
         static void HighlightDestroyableObstacles(ConstructableBase constructableBase)
@@ -100,58 +124,18 @@ namespace TerraformingShared.Tools.BuilderToolPatches
                                 obstacle.GetComponentsInChildren(Builder.sRenderers);
 
                                 obstacleRendererList.AddRange(Builder.sRenderers);
-
-                                foreach (var renderer in obstacleRendererList)
-                                {
-                                    renderer.fadeAmount = .1f;
-
-                                    /*
-                                    if (renderer.enabled && renderer.shadowCastingMode != ShadowCastingMode.ShadowsOnly && !(renderer is ParticleSystemRenderer))
-                                    {
-                                        renderer.GetSharedMaterials(materialList);
-                                        var shaderPassNum = 0;
-                                        foreach (var material in materialList)
-                                        {
-                                            shaderPassNum++;
-                                            if (!(material == null) && !Builder.shadersToExclude.Contains(material.shader) && material.renderQueue < 2450
-                                                && (!material.HasProperty(ShaderPropertyID._EnableCutOff)
-                                                || material.GetFloat(ShaderPropertyID._EnableCutOff) <= 0f)
-                                                && !material.IsKeywordEnabled("FX_BUILDING"))
-                                            {
-                                                Builder.obstaclesBuffer.DrawRenderer(renderer, destroyableObstacleMat, shaderPassNum);
-                                            }
-                                        }
-                                    }*/
-                                }
+                                obstacleRendererList.ForEach(r => r.fadeAmount = .1f);
                             }
                         }
                     }
                 }
             }
         }
-    }
 
-    [HarmonyPatch(typeof(BuilderTool))]
-    [HarmonyPatch(nameof(BuilderTool.OnHover))]
-    [HarmonyPatch(new Type[] { typeof(Constructable) })]
-    public static class OnHoverPatch
-    {
-        public static void Postfix(BuilderTool __instance, Constructable constructable)
+        static void RestoreHighlightedObstacles()
         {
-            if (!constructable.constructed)
-            {
-                var enableText = "Enable Destroying Obstacles";
-                var disableText = "Disable Destroying Obstacles";
-
-                var storedDestroyingEnabled = UpdatePatch.storedEnabledDestroyingObstacles;
-
-                var obstaclesUseText = string.Format("{0} (Hold {1})", storedDestroyingEnabled ? disableText : enableText, uGUI.FormatButton(GameInput.Button.AltTool));
-
-                var handSubscriptText = HandReticle.main.textHandSubscript;
-                handSubscriptText = handSubscriptText.Insert(handSubscriptText.IndexOf(Environment.NewLine), string.Format(", {0}", obstaclesUseText));
-
-                HandReticle.main.SetTextRaw(HandReticle.TextType.HandSubscript, handSubscriptText);
-            }
+            obstacleRendererList.ForEach(renderer => renderer.fadeAmount = 1f);
+            obstacleRendererList.Clear();
         }
     }
 }
