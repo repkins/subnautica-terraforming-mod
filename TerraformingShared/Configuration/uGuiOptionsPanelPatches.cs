@@ -67,9 +67,19 @@ namespace Terraforming.Configuration
                         $"Causes the repulsion cannon to remove small portion of terrain after \"shooting\" pulse to spot. Enabled by default."
                     );
 
+                    __instance.AddSliderOption(modsTabIndex, $"Destroyable obstacle transparency", Config.Instance.destroyableObstacleTransparency,
+                        0.0f, 1.0f,
+                        DefaultConfig.destroyableObstacleTransparency,
+                        0.01f,
+                        new UnityAction<float>(value => Config.Instance.destroyableObstacleTransparency = value),
+                        SliderLabelMode.Float,
+                        "0.00",
+                        $"Allows to adjust transparency amount of destroyable construction obstacles. Transparency serves as warning to be destroyed if destroying obstacles enabled. Defaults to 0.1."
+                    );
+
                     __instance.AddToggleOption(modsTabIndex, $"Destroy obstacles on construction", Config.Instance.destroyLargerObstaclesOnConstruction,
                         new UnityAction<bool>(value => Config.Instance.destroyLargerObstaclesOnConstruction = value),
-                        $"Disables restrictions of overlapping larger objects with placable habitat module. Destroys them when construction of module finishes. Enabled by default."
+                        $"Disables restrictions of overlapping larger objects with placable habitat module. Destroys them when construction of module finishes. Disabled by default."
                     );
 #else
                     __instance.AddToggleOption(modsTabIndex, $"Rebuilding messages", Config.Instance.rebuildMessages,

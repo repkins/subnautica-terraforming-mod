@@ -124,7 +124,7 @@ namespace TerraformingShared.Tools
                                 obstacle.GetComponentsInChildren(Builder.sRenderers);
 
                                 obstacleRendererList.AddRange(Builder.sRenderers);
-                                obstacleRendererList.ForEach(r => r.fadeAmount = .1f);
+                                obstacleRendererList.ForEach(r => r.fadeAmount = Config.Instance.destroyableObstacleTransparency);
                             }
                         }
                     }

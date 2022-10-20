@@ -19,7 +19,8 @@ namespace Terraforming
         public static readonly bool habitantModulesPartialBurying = true;
         public static readonly bool terrainImpactWithRepulsionCannon = true;
         public static readonly float spaceBetweenTerrainHabitantModule = 1.0f;
-        public static readonly bool destroyLargerObstaclesOnConstruction = true;
+        public static readonly float destroyableObstacleTransparency = .1f;
+        public static readonly bool destroyLargerObstaclesOnConstruction = false;
     }
 
     class Config
@@ -28,6 +29,7 @@ namespace Terraforming
         public bool habitantModulesPartialBurying = DefaultConfig.habitantModulesPartialBurying;
         public bool terrainImpactWithRepulsionCannon = DefaultConfig.terrainImpactWithRepulsionCannon;
         public float spaceBetweenTerrainHabitantModule = DefaultConfig.spaceBetweenTerrainHabitantModule;
+        public float destroyableObstacleTransparency = DefaultConfig.destroyableObstacleTransparency;
         public bool destroyLargerObstaclesOnConstruction = DefaultConfig.destroyLargerObstaclesOnConstruction;
 
         private static string assemblyName = Assembly.GetCallingAssembly().GetName().Name;
