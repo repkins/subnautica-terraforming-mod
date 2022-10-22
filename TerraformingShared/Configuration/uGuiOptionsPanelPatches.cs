@@ -79,7 +79,7 @@ namespace Terraforming.Configuration
 
                     __instance.AddToggleOption(modsTabIndex, $"Destroy obstacles on construction", Config.Instance.destroyLargerObstaclesOnConstruction,
                         new UnityAction<bool>(value => Config.Instance.destroyLargerObstaclesOnConstruction = value),
-                        $"Disables restrictions of overlapping larger objects with placable habitat module. Destroys them when construction of module finishes. Disabled by default."
+                        $"Highlights destroyable overlapping certain objects after placing a base module for construction. Destroys them when construction of module finishes. Disabled by default."
                     );
 #else
                     __instance.AddToggleOption(modsTabIndex, $"Rebuilding messages", Config.Instance.rebuildMessages,
