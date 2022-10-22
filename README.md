@@ -1,21 +1,21 @@
 # Subnautica Terraforming Ability Mod
 Terraforming mod for Subnautica and it's expansion Below Zero - underwater survival experiences.
 
-# Download
+## Download
 link here
 
-# Features:
+## Features:
 - **Saves/loads** modified terrain to/from saves. Saves only those terrain areas which was modified, reducing save size bloating, into new "CompiledOctreesCache" folder in your save folders.
 - **Allows "partially" burying habitat modules** into terrain. Mod automatically modifies terrain around them after finishing construction so habitat modules does not "overlap" with the terrain.
 - **Repulsion cannon** now can remove small portions of terrain when "shooting" pulses at those spots in terrain.
 - **"Obsolute" terraformer** tool (obtainable using console commands only, i.e. "*item terraformer*") now actually works, which removes/adds portions of terrain.
 - **"dig #"** console command also now actually works which allows to perform **spherical removal** of terrain at player location as a sphere center within provided radius as a first parameter of command, ex. "dig 5".
 
-# Installation:
+## Installation:
 1. Install **QModsManager**.
 2. Put mod folder into "QMods" folder of game directory.
 
-# Configuration:
+## Configuration:
 There is new section added in **"Mods" tab** of **in-game options** which allows to change the following:
 - **Rebuilding messages** - shows terrain rebuilding message while terrain rebuilding is in progress. Enabled by default..
 - **Habitant modules burying** - allows habitat burying into terrain and adjusts overlapping terrain around them. Enabled by default..
@@ -23,17 +23,17 @@ There is new section added in **"Mods" tab** of **in-game options** which allows
 - **Repulsion terrain impact** - causes the repulsion cannon to remove small portion of terrain after "shooting" pulse at that spot of terrain. Enabled by default.
 - **Destroy obstacles** - disables restrictions of overlapping larger objects (rocks, stones, structures) when placing modules for construction and highlights them in red. Destroys them when construction of module finishes, so careful with this setting on. Enabled by default.
 
-# Un-installation
+## Un-installation
 Remove this mod folder in QMods folder. Optionally delete "CompiledOctreesCache" folder in your save folders if they are created.
 
-# Known issues:
+## Known issues:
 1. Terraforming is not immediate[^immediate].
 2. Terrain still overlaps at moonpool connectors, or does not adjusts at all[^overlaps].
 3. Player on surface falls-through terrain when trying to terraform. Same with other physics objects[^falls].
 4. Game freezes while doing large terrain edit at a time with terraformer tool or "dig #" console command[^freezes].
 5. Sometimes after terrain modifications it leaves "invisible" ground/wall, preventing further edits[^invisible].
 
-# Questions? Problems?
+## Questions? Problems?
 For problems and other technical issues not stated there please ask in **Official Subnautica Modding** discord server.
 
 Please be noticed that creating too much details in terrain could cost more performance as there comes more detailed data to render, like with too many habitats/modules. It's basically designed for doing terrain adjustments, not creating new caves/mines or something which creates new details to render, although creating caves/mines is permitted/free to do so.
