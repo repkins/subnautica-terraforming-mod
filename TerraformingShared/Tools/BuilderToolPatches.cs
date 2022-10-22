@@ -8,6 +8,7 @@ using UnityEngine;
 using System.Collections;
 using System.Linq;
 
+#if BelowZero
 namespace TerraformingShared.Tools
 {
     [HarmonyPatch(typeof(BuilderTool))]
@@ -139,3 +140,4 @@ namespace TerraformingShared.Tools
         }
     }
 }
+#endif

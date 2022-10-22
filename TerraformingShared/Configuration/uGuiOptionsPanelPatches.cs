@@ -96,8 +96,8 @@ namespace Terraforming.Configuration
                         new UnityAction<float>(value => Config.Instance.spaceBetweenTerrainHabitantModule = value)
                     );
 
-                    __instance.AddToggleOption(modsTabIndex, $"Repulsion terrain impact", Config.Instance.terrainImpactWithPropulsionCannon,
-                        new UnityAction<bool>(value => Config.Instance.terrainImpactWithPropulsionCannon = value)
+                    __instance.AddToggleOption(modsTabIndex, $"Repulsion terrain impact", Config.Instance.terrainImpactWithRepulsionCannon,
+                        new UnityAction<bool>(value => Config.Instance.terrainImpactWithRepulsionCannon = value)
                     );
 
                     __instance.AddToggleOption(modsTabIndex, $"Destroy obstacles", Config.Instance.destroyLargerObstaclesOnConstruction,
