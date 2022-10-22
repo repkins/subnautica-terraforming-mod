@@ -1,5 +1,5 @@
-# Subnautica Terraforming Ability Mod
-Terraforming mod for Subnautica and it's expansion Below Zero - underwater survival experiences.
+# Subnautica Terraforming Mod
+Terraforming Ability mod for Subnautica and it's expansion Below Zero - underwater survival experiences.
 
 **[Download for Subnautica v1.3.0](https://github.com/repkins/subnautica-terraforming-mod/releases/download/S.1.3.0/Terraforming-SN-v130.zip)**
 
