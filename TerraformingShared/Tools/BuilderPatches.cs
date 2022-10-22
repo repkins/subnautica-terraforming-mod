@@ -82,18 +82,9 @@ namespace Terraforming.Tools.BuilderPatches
                 // Exclude terrain obstacles so they gets terraformed.
                 results.RemoveAll((gameObject) => Builder.IsObstacle(gameObject.GetComponent<Collider>()));
             }
-
-#if !BelowZero
-            if (Config.Instance.destroyLargerObstaclesOnConstruction)
-            {
-                results.RemoveAll((gameObject) => gameObject.GetComponent<ConstructionObstacle>() != null);
-                results.RemoveAll((gameObject) => gameObject.GetComponent<ImmuneToPropulsioncannon>() != null);
-            }
-#endif
         }
     }
 
-#if BelowZero
     [HarmonyPatch(typeof(Builder))]
     [HarmonyPatch(nameof(Builder.UpdateAllowed))]
     static class UpdateAllowedPatch
@@ -114,24 +105,41 @@ namespace Terraforming.Tools.BuilderPatches
 
         static void PatchClearFromConstructionObstacles(CodeMatcher codeCursor, ILGenerator generator)
         {
+#if BelowZero
             codeCursor.Start();
             codeCursor.MatchForward(false,
                 new CodeMatch(OpCodes.Ldloc_1),
-                new CodeMatch(OpCodes.Ldloc_3),     // Load "obstaclesList" variable into evaluation stack to get count of obstacles.
+                new CodeMatch(OpCodes.Ldloc_3),     // Loads "obstaclesList" variable into evaluation stack to get count of obstacles.
                 new CodeMatch(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(List<GameObject>), nameof(List<GameObject>.Count))),
                 new CodeMatch(OpCodes.Ldc_I4_0),
                 new CodeMatch(OpCodes.Ceq),
                 new CodeMatch(OpCodes.And),
-                new CodeMatch(OpCodes.Stloc_1)      // Assign result of bitwise operation to "hasObstacles" bool.
+                new CodeMatch(OpCodes.Stloc_1)      // Assigns result of bitwise operation to "hasObstacles" bool.
             );
+#else
+            codeCursor.Start();
+            codeCursor.MatchForward(false,
+                new CodeMatch(OpCodes.Ldloc_S),     // Loads "obstaclesList" variable into evaluation stack to get count of obstacles.
+                new CodeMatch(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(List<GameObject>), nameof(List<GameObject>.Count))),
+                new CodeMatch(OpCodes.Ldc_I4_0),
+                new CodeMatch(OpCodes.Ceq),
+                new CodeMatch(OpCodes.Stloc_1)      // Assigns result of bitwise operation to "hasObstacles" bool.
+            );
+#endif
 
             if (codeCursor.IsValid)
             {
                 var labels = codeCursor.Instruction.ExtractLabels();
-
+#if !BelowZero
+                var obstaclesListLocal = (LocalBuilder)codeCursor.Operand;
+                codeCursor.InsertAndAdvance(
+                    new CodeInstruction(OpCodes.Ldloc_S, obstaclesListLocal).WithLabels(labels));
+#else
+                codeCursor.InsertAndAdvance(
+                    new CodeInstruction(OpCodes.Ldloc_3).WithLabels(labels));
+#endif
                 // Make it to allow construction by clearing contruction obstacles so "hasObstacles" would be false.
                 codeCursor.InsertAndAdvance(
-                    new CodeInstruction(OpCodes.Ldloc_3).WithLabels(labels),    // Load "obstaclesList" into evaluation stack to pass as argument.
                     new CodeInstruction(OpCodes.Call, AccessTools.Method($"{typeof(UpdateAllowedPatch)}:{nameof(ClearConstructionObstacles)}", new Type[] { typeof(List<GameObject>) }))
                 );
             }
@@ -140,12 +148,19 @@ namespace Terraforming.Tools.BuilderPatches
         static void ClearConstructionObstacles(List<GameObject> results)
         {
             results.RemoveAll(IsConstructionObstacle);
+#if !BelowZero
+            results.RemoveAll(IsImmuneToPropulsion);
+#endif
         }
 
         static bool IsConstructionObstacle(GameObject go)
         {
             return go.GetComponent<ConstructionObstacle>() != null;
         }
+
+        static bool IsImmuneToPropulsion(GameObject go)
+        {
+            return go.GetComponent<ImmuneToPropulsioncannon>() != null;
+        }
     }
-#endif
 }
