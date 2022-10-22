@@ -1,9 +1,9 @@
 # Subnautica Terraforming Ability Mod
 Terraforming mod for Subnautica and it's expansion Below Zero - underwater survival experiences.
 
-**[Download for Subnautica](https://github.com/repkins/subnautica-terraforming-mod/releases/download/S.1.3.0/Terraforming-SN-v130.zip)**
+**[Download for Subnautica v1.3.0](https://github.com/repkins/subnautica-terraforming-mod/releases/download/S.1.3.0/Terraforming-SN-v130.zip)**
 
-**[Download for Below Zero](https://github.com/repkins/subnautica-terraforming-mod/releases/download/v1.4.1/TerraformingBZ_v141.zip)**
+**[Download for Below Zero v1.4.1](https://github.com/repkins/subnautica-terraforming-mod/releases/download/v1.4.1/TerraformingBZ_v141.zip)**
 
 ## Features:
 - **Saves/loads** modified terrain to/from saves. Saves only those terrain areas which was modified, reducing save size bloating, into new "CompiledOctreesCache" folder in your save folders.
