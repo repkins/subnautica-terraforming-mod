@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Terraforming.Resources;
 using static HarmonyLib.Tools.Logger;
 
 namespace Terraforming
@@ -19,7 +20,7 @@ namespace Terraforming
             ChannelFilter = LogChannel.Error | LogChannel.Warn;
             HarmonyFileLog.Enabled = true;
 
-            var harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "subnautica.repkins.terraforming.bz");
+            var harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), Identifiers.HarmonyId);
             Logger.Info("Successfully patched");
         }
     }
