@@ -4,7 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Terraforming.Resources;
 using UnityEngine.Events;
+
+#if !BelowZero
+using Terraforming.Shims;
+#endif
 
 namespace Terraforming.Configuration
 {
@@ -41,18 +46,17 @@ namespace Terraforming.Configuration
 
                     __instance.AddHeading(modsTabIndex, $"Terraforming");
 
-#if BelowZero
-                    __instance.AddToggleOption(modsTabIndex, $"Rebuilding messages", Config.Instance.rebuildMessages,
+                    __instance.AddToggleOption(modsTabIndex, Texts.RebuildingMessages, Config.Instance.rebuildMessages,
                         new UnityAction<bool>(value => Config.Instance.rebuildMessages = value),
                         $"Shows terrain rebuilding message while terrain rebuilding is in progress. Enabled by default."
                     );
 
-                    __instance.AddToggleOption(modsTabIndex, $"Habitant modules burying", Config.Instance.habitantModulesPartialBurying,
+                    __instance.AddToggleOption(modsTabIndex, Texts.HabitatModulesBurying, Config.Instance.habitantModulesPartialBurying,
                         new UnityAction<bool>(value => Config.Instance.habitantModulesPartialBurying = value),
                         $"Allows habitat burying into terrain and adjusts overlapping terrain around them. Enabled by default."
                     );
 
-                    __instance.AddSliderOption(modsTabIndex, $"Space between terrain and module", Config.Instance.spaceBetweenTerrainHabitantModule,
+                    __instance.AddSliderOption(modsTabIndex, Texts.TerrainVsModuleSpace, Config.Instance.spaceBetweenTerrainHabitantModule,
                         0.0f, 10.0f,
                         DefaultConfig.spaceBetweenTerrainHabitantModule,
                         0.5f,
@@ -62,48 +66,25 @@ namespace Terraforming.Configuration
                         $"Allows to adjust space between terrain surface and base compartment. High value means more space, low value means less space. Defaults to 1.0."
                     );
 
-                    __instance.AddToggleOption(modsTabIndex, $"Repulsion cannon terrain impact", Config.Instance.terrainImpactWithRepulsionCannon,
+                    __instance.AddToggleOption(modsTabIndex, Texts.RepulsionTerrainImpact, Config.Instance.terrainImpactWithRepulsionCannon,
                         new UnityAction<bool>(value => Config.Instance.terrainImpactWithRepulsionCannon = value),
                         $"Causes the repulsion cannon to remove small portion of terrain after \"shooting\" pulse to spot. Enabled by default."
                     );
 
-                    __instance.AddSliderOption(modsTabIndex, $"Destroyable obstacle transparency", Config.Instance.destroyableObstacleTransparency,
+                    __instance.AddSliderOption(modsTabIndex, Texts.DestroyableObstacleTransparency, Config.Instance.destroyableObstacleTransparency,
                         0.0f, 1.0f,
                         DefaultConfig.destroyableObstacleTransparency,
                         0.01f,
                         new UnityAction<float>(value => Config.Instance.destroyableObstacleTransparency = value),
-                        SliderLabelMode.Float,
-                        "0.00",
+                        SliderLabelMode.Percent,
+                        "000",
                         $"Allows to adjust transparency amount of destroyable construction obstacles. Transparency serves as warning to be destroyed if destroying obstacles enabled. Defaults to 0.1."
                     );
 
-                    __instance.AddToggleOption(modsTabIndex, $"Destroy obstacles on construction", Config.Instance.destroyLargerObstaclesOnConstruction,
+                    __instance.AddToggleOption(modsTabIndex, Texts.DestroyObstacles, Config.Instance.destroyLargerObstaclesOnConstruction,
                         new UnityAction<bool>(value => Config.Instance.destroyLargerObstaclesOnConstruction = value),
                         $"Disables restrictions of overlapping larger objects with placable habitat module. Destroys them when construction of module finishes. Disabled by default."
                     );
-#else
-                    __instance.AddToggleOption(modsTabIndex, $"Rebuilding messages", Config.Instance.rebuildMessages,
-                        new UnityAction<bool>(value => Config.Instance.rebuildMessages = value)
-                    );
-
-                    __instance.AddToggleOption(modsTabIndex, $"Habitant modules burying", Config.Instance.habitantModulesPartialBurying,
-                        new UnityAction<bool>(value => Config.Instance.habitantModulesPartialBurying = value)
-                    );
-
-                    __instance.AddSliderOption(modsTabIndex, $"Terrain vs module space", Config.Instance.spaceBetweenTerrainHabitantModule,
-                        0.0f, 10.0f,
-                        DefaultConfig.spaceBetweenTerrainHabitantModule,
-                        new UnityAction<float>(value => Config.Instance.spaceBetweenTerrainHabitantModule = value)
-                    );
-
-                    __instance.AddToggleOption(modsTabIndex, $"Repulsion terrain impact", Config.Instance.terrainImpactWithRepulsionCannon,
-                        new UnityAction<bool>(value => Config.Instance.terrainImpactWithRepulsionCannon = value)
-                    );
-
-                    __instance.AddToggleOption(modsTabIndex, $"Destroy obstacles", Config.Instance.destroyLargerObstaclesOnConstruction,
-                        new UnityAction<bool>(value => Config.Instance.destroyLargerObstaclesOnConstruction = value)
-                    );
-#endif
                 }
             }
         }
