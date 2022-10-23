@@ -7,8 +7,12 @@ using UnityEngine.Rendering;
 using UnityEngine;
 using System.Collections;
 using System.Linq;
+using Terraforming.Tools;
 
-#if BelowZero
+#if !BelowZero
+using Terraforming.Shims;
+#endif
+
 namespace TerraformingShared.Tools
 {
     [HarmonyPatch(typeof(BuilderTool))]
@@ -84,10 +88,10 @@ namespace TerraformingShared.Tools
 
                 var obstaclesUseText = string.Format("{0} (Hold {1})", storedDestroyingEnabled ? disableText : enableText, uGUI.FormatButton(GameInput.Button.AltTool));
 
-                var handSubscriptText = HandReticle.main.textHandSubscript;
+                var handSubscriptText = HandReticle.main.GetHandSubscript();
                 handSubscriptText = handSubscriptText.Insert(handSubscriptText.IndexOf(Environment.NewLine), string.Format(", {0}", obstaclesUseText));
 
-                HandReticle.main.SetTextRaw(HandReticle.TextType.HandSubscript, handSubscriptText);
+                HandReticle.main.SetHandSubscriptText(handSubscriptText);
             }
         }
 
@@ -101,35 +105,38 @@ namespace TerraformingShared.Tools
 
         static void HighlightDestroyableObstacles(ConstructableBase constructableBase)
         {
+            using (var orientedBoundsListPool = Pool<ListPool<OrientedBounds>>.Get())
             using (var obstacleListPool = Pool<ListPool<GameObject>>.Get())
             {
+                var orientedBoundsList = orientedBoundsListPool.list;
                 var obstacleList = obstacleListPool.list;
 
-                using (var orientedBoundsListPool = Pool<ListPool<OrientedBounds>>.Get())
-                {
-                    var orientedBoundsList = orientedBoundsListPool.list;
-                    Builder.CacheBounds(constructableBase.gameObject.transform, constructableBase.gameObject, orientedBoundsList, false);
-                    Builder.GetObstacles(constructableBase.transform.position, constructableBase.transform.rotation, orientedBoundsList, null, obstacleList);
-                }
+                Builder.CacheBounds(constructableBase.gameObject.transform, constructableBase.gameObject, orientedBoundsList, false);
+                BuilderExtensions.GetObstacles(constructableBase.transform.position, constructableBase.transform.rotation, orientedBoundsList, obstacleList);
+
+                Terraforming.Logger.Info($"obstacleList.Count = {obstacleList.Count}");
 
                 if (obstacleList.Count > 0)
                 {
                     using (var materialListPool = Pool<ListPool<Material>>.Get())
+                    using (var rendererListPool = Pool<ListPool<Renderer>>.Get())
                     {
                         var materialList = materialListPool.list;
+                        var rendererList = rendererListPool.list;
 
                         foreach (var obstacle in obstacleList)
                         {
                             if (!(obstacle.GetComponent<BaseCell>() != null) && Builder.CanDestroyObject(obstacle))
                             {
-                                obstacle.GetComponentsInChildren(Builder.sRenderers);
+                                obstacle.GetComponentsInChildren(rendererList);
 
-                                obstacleRendererList.AddRange(Builder.sRenderers);
-                                obstacleRendererList.ForEach(r => r.fadeAmount = Config.Instance.destroyableObstacleTransparency);
+                                obstacleRendererList.AddRange(rendererList);
                             }
                         }
                     }
                 }
+
+                obstacleRendererList.ForEach(r => r.fadeAmount = Config.Instance.destroyableObstacleTransparency);
             }
         }
 
@@ -140,4 +147,3 @@ namespace TerraformingShared.Tools
         }
     }
 }
-#endif

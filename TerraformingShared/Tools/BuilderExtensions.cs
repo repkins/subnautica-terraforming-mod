@@ -9,20 +9,24 @@ namespace TerraformingShared.Tools
     {
         public static void ClearConstructionObstacles(List<GameObject> results)
         {
-            results.RemoveAll(IsConstructionObstacle);
+            results.RemoveAll(IsObstacleOf<ConstructionObstacle>);
 #if !BelowZero
-            results.RemoveAll(IsImmuneToPropulsion);
+            results.RemoveAll(IsObstacleOf<ImmuneToPropulsioncannon>);
 #endif
         }
 
-        static bool IsConstructionObstacle(GameObject go)
+        static bool IsObstacleOf<T>(GameObject go)
         {
-            return go.GetComponent<ConstructionObstacle>() != null;
+            return go.GetComponent<T>() != null;
         }
 
-        static bool IsImmuneToPropulsion(GameObject go)
+        public static void GetObstacles(Vector3 position, Quaternion rotation, List<OrientedBounds> localBounds, List<GameObject> results)
         {
-            return go.GetComponent<ImmuneToPropulsioncannon>() != null;
+#if !BelowZero
+            Builder.GetObstacles(position, rotation, localBounds, results);
+#else
+            Builder.GetObstacles(position, rotation, localBounds, null, results);
+#endif
         }
     }
 }
