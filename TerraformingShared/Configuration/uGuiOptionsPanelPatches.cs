@@ -78,7 +78,7 @@ namespace Terraforming.Configuration
                         new UnityAction<float>(value => Config.Instance.destroyableObstacleTransparency = value),
                         SliderLabelMode.Percent,
                         "000",
-                        $"Allows to adjust transparency amount of destroyable construction obstacles. Transparency serves as warning to be destroyed if destroying obstacles enabled. Defaults to 0.1."
+                        $"Allows to adjust transparency amount of destroyable construction obstacles. Transparency serves as warning to be destroyed if destroying obstacles enabled. Defaults to 10."
                     );
 
                     __instance.AddToggleOption(modsTabIndex, Texts.DestroyObstacles, Config.Instance.destroyLargerObstaclesOnConstruction,

@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using TerraformingShared.Tools;
 using UnityEngine;
 
 namespace Terraforming.Tools.BuilderPatches
@@ -147,20 +148,7 @@ namespace Terraforming.Tools.BuilderPatches
 
         static void ClearConstructionObstacles(List<GameObject> results)
         {
-            results.RemoveAll(IsConstructionObstacle);
-#if !BelowZero
-            results.RemoveAll(IsImmuneToPropulsion);
-#endif
-        }
-
-        static bool IsConstructionObstacle(GameObject go)
-        {
-            return go.GetComponent<ConstructionObstacle>() != null;
-        }
-
-        static bool IsImmuneToPropulsion(GameObject go)
-        {
-            return go.GetComponent<ImmuneToPropulsioncannon>() != null;
+            BuilderExtensions.ClearConstructionObstacles(results);
         }
     }
 }
