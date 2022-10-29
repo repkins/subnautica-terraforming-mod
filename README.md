@@ -9,7 +9,9 @@ Terraforming Ability mod for Subnautica and it's expansion Below Zero - underwat
 
 ## Features:
 - **Saves/loads** modified terrain to/from saves. Saves only those terrain areas which was modified, reducing save size bloating, into new "CompiledOctreesCache" folder in your save folders.
-- **Allows "partially" burying habitat modules** into terrain. Mod automatically modifies terrain around them after finishing construction so habitat modules does not "overlap" with the terrain. Also allows to destroy overlapping certain objects aka obstacles (rocks, stones, structures, etc) using a hotkey _(hotkey BZ only)_.
+- **Allows "partially" burying habitat modules** into terrain. Mod automatically modifies terrain around them after finishing construction so habitat modules does not "overlap" with the terrain.
+    - Also allows to destroy almost all rogue objects (aka obstacles) overlapping with base module (rocks, stones, structures, etc) using a hotkey.
+    - Highlights overlapping objects to be destroyed. This also includes rogue objects if destroy obstacles enabled.
 - **Repulsion cannon** *("Obsolete" in Below Zero)* now can remove small portions of terrain when "shooting" pulses at those spots in terrain.
 - **"Obsolete" terraformer** tool (obtainable using console commands only, i.e. "*item terraformer*") now actually works, which removes/adds portions of terrain.
 - **"dig #"** console command also now actually works which allows to perform **spherical removal** of terrain at player location as a sphere center within provided radius as a first parameter of command, ex. "dig 5".
@@ -24,8 +26,8 @@ There is new section added in **"Mods" tab** of **in-game options** which allows
 - **Habitant modules burying** - allows habitat burying into terrain and adjusts overlapping terrain around them. Enabled by default..
 - **Terrain vs module space** - allows to adjust space between terrain surface and base compartment. High value means more space, low value means less space. Defaults to 1.0.
 - **Repulsion terrain impact** - causes the repulsion cannon to remove small portion of terrain after "shooting" pulse at that spot of terrain. Enabled by default.
-- **Destroyable obstacle transparency** (BZ only) - allows to adjust transparency amount of destroyable construction obstacles. Transparency serves as warning to be destroyed if destroying obstacles enabled. Defaults to 0.1.
-- **Destroy obstacles on construction** - highlights destroyable overlapping certain objects after/before *(after at BZ, before at SN1)* placing a base module for construction. Destroys them when construction of module finishes, so *careful with this setting on*. Disabled by default. 
+- **Destroyable obstacle transparency** - allows to adjust transparency amount of destroyable construction obstacles. Transparency serves as warning to be destroyed if destroying obstacles enabled. Defaults to 0.1.
+- **Destroy obstacles on construction** - highlights destroyable overlapping certain objects after placing a base module for construction. Destroys them when construction of module finishes, so *careful with this setting on*. Disabled by default. 
 
 ## Un-installation
 Remove this mod folder in QMods folder. Optionally delete "CompiledOctreesCache" folder in your save folders if they are created.
