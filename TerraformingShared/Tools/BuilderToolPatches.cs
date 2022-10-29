@@ -58,10 +58,7 @@ namespace TerraformingShared.Tools
                     {
                         RestoreHighlightedObstacles();
 
-                        if (Config.Instance.destroyLargerObstaclesOnConstruction)
-                        {
-                            HighlightDestroyableObstacles(constructableBase);
-                        }
+                        HighlightDestroyableObstacles(constructableBase);
                     }
 
                     prevTarget = targetObject;
@@ -105,28 +102,37 @@ namespace TerraformingShared.Tools
 
         static void HighlightDestroyableObstacles(ConstructableBase constructableBase)
         {
-            using (var orientedBoundsListPool = Pool<ListPool<OrientedBounds>>.Get())
+            using (var constructableBoundsListPool = Pool<ListPool<ConstructableBounds>>.Get())
             using (var obstacleListPool = Pool<ListPool<GameObject>>.Get())
+            using (var overlappedObjectsPool = Pool<ListPool<GameObject>>.Get())
             {
-                var orientedBoundsList = orientedBoundsListPool.list;
+                var constructableBoundsList = constructableBoundsListPool.list;
                 var obstacleList = obstacleListPool.list;
+                var overlappedObjects = overlappedObjectsPool.list;
 
-                Builder.CacheBounds(constructableBase.gameObject.transform, constructableBase.gameObject, orientedBoundsList, false);
-                BuilderExtensions.GetObstacles(constructableBase.transform.position, constructableBase.transform.rotation, orientedBoundsList, obstacleList);
+                constructableBase.GetComponentsInChildren(true, constructableBoundsList);
 
-                Terraforming.Logger.Info($"obstacleList.Count = {obstacleList.Count}");
+                var orientedBoundsList = constructableBoundsList.Select(constructableBounds => OrientedBounds.ToWorldBounds(constructableBounds.transform, constructableBounds.bounds));
+                foreach (var orientedBounds in orientedBoundsList)
+                {
+                    overlappedObjects.Clear();
+                    Builder.GetOverlappedObjects(orientedBounds.position, orientedBounds.rotation, orientedBounds.extents, overlappedObjects);
+
+                    obstacleList.AddRange(overlappedObjects);
+                }
+
+                Terraforming.Logger.Debug($"obstacleList.Count = {obstacleList.Count}");
 
                 if (obstacleList.Count > 0)
                 {
-                    using (var materialListPool = Pool<ListPool<Material>>.Get())
                     using (var rendererListPool = Pool<ListPool<Renderer>>.Get())
                     {
-                        var materialList = materialListPool.list;
                         var rendererList = rendererListPool.list;
 
                         foreach (var obstacle in obstacleList)
                         {
-                            if (!(obstacle.GetComponent<BaseCell>() != null) && Builder.CanDestroyObject(obstacle))
+                            if ((Config.Instance.destroyLargerObstaclesOnConstruction || !BuilderExtensions.IsContructionObstacle(obstacle))
+                                && obstacle.GetComponent<BaseCell>() == null && Builder.CanDestroyObject(obstacle))
                             {
                                 obstacle.GetComponentsInChildren(rendererList);
 
