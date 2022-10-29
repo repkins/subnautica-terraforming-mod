@@ -9,10 +9,22 @@ namespace TerraformingShared.Tools
     {
         public static void ClearConstructionObstacles(List<GameObject> results)
         {
-            results.RemoveAll(IsObstacleOf<ConstructionObstacle>);
+            results.RemoveAll(IsContructionObstacle);
+        }
+
+        public static bool IsContructionObstacle(GameObject go)
+        {
+            if (IsObstacleOf<ConstructionObstacle>(go))
+            {
+                return true;
+            }
 #if !BelowZero
-            results.RemoveAll(IsObstacleOf<ImmuneToPropulsioncannon>);
+            if (IsObstacleOf<ImmuneToPropulsioncannon>(go))
+            {
+                return true;
+            }
 #endif
+            return false;
         }
 
         static bool IsObstacleOf<T>(GameObject go)
