@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Terraforming.WorldStreaming;
 using UnityEngine;
+using UWE;
 
 namespace Terraforming
 {
@@ -12,7 +13,7 @@ namespace Terraforming
         public static void Terraform(Vector3 position, float range)
         {
 #if !BelowZero
-            global::Utils.PlayOneShotPS("VFX/xTerraform", position, Quaternion.Euler(new Vector3(270f, 0f, 0f)), null, 1f);
+            CoroutineHost.StartCoroutine(global::Utils.PlayOneShotPSAsync("VFX/xTerraform", position, Quaternion.Euler(new Vector3(270f, 0f, 0f)), null, 1.0f));
 #endif
             if (LargeWorldStreamer.main != null)
             {

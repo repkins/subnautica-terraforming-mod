@@ -9,10 +9,6 @@ using System.Collections;
 using System.Linq;
 using Terraforming.Tools;
 
-#if !BelowZero
-using Terraforming.Shims;
-#endif
-
 namespace TerraformingShared.Tools
 {
     [HarmonyPatch(typeof(BuilderTool))]

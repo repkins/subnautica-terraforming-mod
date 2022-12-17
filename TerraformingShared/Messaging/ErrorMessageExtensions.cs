@@ -5,11 +5,7 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 
-#if BelowZero
 using TMPro;
-#else
-using UnityEngine.UI;
-#endif
 
 namespace Terraforming.Messaging
 {
@@ -72,16 +68,9 @@ namespace Terraforming.Messaging
             main.offsetY = offsetY - offsetToRemove;
         }
 
-#if BelowZero
         public static TextMeshProUGUI GetMessageEntry(ErrorMessage._Message message)
         {
             return message.entry;
         }
-#else
-        public static Text GetMessageEntry(ErrorMessage._Message message)
-        {
-            return message.entry;
-        }
-#endif
     }
 }

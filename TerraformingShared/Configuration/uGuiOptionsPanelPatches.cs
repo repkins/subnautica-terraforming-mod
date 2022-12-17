@@ -7,10 +7,6 @@ using System.Threading.Tasks;
 using Terraforming.Resources;
 using UnityEngine.Events;
 
-#if !BelowZero
-using Terraforming.Shims;
-#endif
-
 namespace Terraforming.Configuration
 {
     public static class uGuiOptionsPanelPatches
@@ -24,7 +20,7 @@ namespace Terraforming.Configuration
         public static class AddTabPatch
         {
             [HarmonyPostfix]
-            public static void Postfix(uGUI_TabbedControlsPanel __instance, int __result, string label)
+            public static void AssignModsTabIndex(uGUI_TabbedControlsPanel __instance, int __result, string label)
             {
                 if (label == modsLabel)
                 {
@@ -38,7 +34,16 @@ namespace Terraforming.Configuration
         public static class AddTabsPatch
         {
             [HarmonyPostfix]
-            public static void Postfix(uGUI_OptionsPanel __instance)
+            public static void EnsureModsTabAdded(uGUI_OptionsPanel __instance)
+            {
+                if (!nullableModsTabIndex.HasValue)
+                {
+                    __instance.AddTab(modsLabel);
+                }
+            }
+
+            [HarmonyPostfix]
+            public static void AddTerraformingSection(uGUI_OptionsPanel __instance)
             {
                 if (nullableModsTabIndex.HasValue)
                 {
@@ -94,7 +99,7 @@ namespace Terraforming.Configuration
         public static class SetVisibleTabPatch
         {
             [HarmonyPrefix]
-            public static void Prefix(uGUI_TabbedControlsPanel __instance, int tabIndex)
+            public static void OnSwitchingFromModsTab_SaveTerraformingConfig(uGUI_TabbedControlsPanel __instance, int tabIndex)
             {
                 if (nullableModsTabIndex.HasValue)
                 {
@@ -114,7 +119,7 @@ namespace Terraforming.Configuration
         public static class OnDisablePatch
         {
             [HarmonyPostfix]
-            public static void Postfix(uGUI_OptionsPanel __instance)
+            public static void OnClosingOptionsPanelAtModsTab_SaveTerraformingConfig(uGUI_OptionsPanel __instance)
             {
                 if (nullableModsTabIndex.HasValue)
                 {

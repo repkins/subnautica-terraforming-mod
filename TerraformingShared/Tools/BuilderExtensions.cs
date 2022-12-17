@@ -34,11 +34,7 @@ namespace TerraformingShared.Tools
 
         public static void GetObstacles(Vector3 position, Quaternion rotation, List<OrientedBounds> localBounds, List<GameObject> results)
         {
-#if !BelowZero
-            Builder.GetObstacles(position, rotation, localBounds, results);
-#else
             Builder.GetObstacles(position, rotation, localBounds, null, results);
-#endif
         }
     }
 }

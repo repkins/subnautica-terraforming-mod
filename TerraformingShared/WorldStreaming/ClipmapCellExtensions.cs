@@ -45,15 +45,9 @@ namespace Terraforming.WorldStreaming
             var clipmapCell = (ClipmapCell)owner;
             var meshBuilder = (MeshBuilder)state;
 
-#if BelowZero
             CoroutineHost.StartCoroutine(clipmapCell.RebuildLayersAsync(meshBuilder));
-#else
-            clipmapCell.RebuildLayers(meshBuilder, out var clipmapChunk);
-            clipmapCell.level.OnEndBuildLayers(clipmapCell, clipmapChunk);
-#endif
         }
 
-#if BelowZero
         public static IEnumerator RebuildLayersAsync(this ClipmapCell clipmapCell, MeshBuilder meshBuilder)
         {
             Logger.Debug($"{clipmapCell}: Begin");
@@ -73,19 +67,6 @@ namespace Terraforming.WorldStreaming
 
             yield break;
         }
-#else
-        public static void RebuildLayers(this ClipmapCell clipmapCell, MeshBuilder meshBuilder, out ClipmapChunk clipmapChunk)
-        {
-            Logger.Debug($"{clipmapCell}: Begin");
-
-            var host = clipmapCell.level.streamer.host;
-            clipmapChunk = meshBuilder.DoFinalizePart(host.chunkRoot, host.chunkPrefab, host.chunkLayerPrefab);
-
-            clipmapCell.level.streamer.meshBuilderPool.Return(meshBuilder);
-
-            Logger.Debug($"{clipmapCell}: End");
-        }
-#endif
 
         public static void SwapChunk(this ClipmapCell clipmapCell, ClipmapChunk nullableClipmapChunk)
         {
@@ -101,19 +82,11 @@ namespace Terraforming.WorldStreaming
             var oldClipmapChunk = clipmapCell.chunk;
             if (oldClipmapChunk)
             {
-#if BelowZero
                 if (!clipmapCell.streamer.host.terrainPoolManager.meshPoolingEnabled)
                 {
                     MeshBuilder.DestroyMeshes(oldClipmapChunk);
                 }
                 clipmapCell.ReturnChunkToPool(oldClipmapChunk);
-#else
-                MeshBuilder.DestroyMeshes(oldClipmapChunk);
-                if (oldClipmapChunk.gameObject)
-                {
-                    UnityEngine.Object.Destroy(oldClipmapChunk.gameObject);
-                }
-#endif
             }
 
             clipmapCell.chunk = nullableClipmapChunk;

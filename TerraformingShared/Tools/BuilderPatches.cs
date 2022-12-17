@@ -106,7 +106,6 @@ namespace Terraforming.Tools.BuilderPatches
 
         static void PatchClearFromConstructionObstacles(CodeMatcher codeCursor, ILGenerator generator)
         {
-#if BelowZero
             codeCursor.Start();
             codeCursor.MatchForward(false,
                 new CodeMatch(OpCodes.Ldloc_1),
@@ -117,28 +116,14 @@ namespace Terraforming.Tools.BuilderPatches
                 new CodeMatch(OpCodes.And),
                 new CodeMatch(OpCodes.Stloc_1)      // Assigns result of bitwise operation to "hasObstacles" bool.
             );
-#else
-            codeCursor.Start();
-            codeCursor.MatchForward(false,
-                new CodeMatch(OpCodes.Ldloc_S),     // Loads "obstaclesList" variable into evaluation stack to get count of obstacles.
-                new CodeMatch(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(List<GameObject>), nameof(List<GameObject>.Count))),
-                new CodeMatch(OpCodes.Ldc_I4_0),
-                new CodeMatch(OpCodes.Ceq),
-                new CodeMatch(OpCodes.Stloc_1)      // Assigns result of bitwise operation to "hasObstacles" bool.
-            );
-#endif
 
             if (codeCursor.IsValid)
             {
                 var labels = codeCursor.Instruction.ExtractLabels();
-#if !BelowZero
-                var obstaclesListLocal = (LocalBuilder)codeCursor.Operand;
-                codeCursor.InsertAndAdvance(
-                    new CodeInstruction(OpCodes.Ldloc_S, obstaclesListLocal).WithLabels(labels));
-#else
+
                 codeCursor.InsertAndAdvance(
                     new CodeInstruction(OpCodes.Ldloc_3).WithLabels(labels));
-#endif
+
                 // Make it to allow construction by clearing contruction obstacles so "hasObstacles" would be false.
                 codeCursor.InsertAndAdvance(
                     new CodeInstruction(OpCodes.Call, AccessTools.Method($"{typeof(UpdateAllowedPatch)}:{nameof(ClearConstructionObstacles)}", new Type[] { typeof(List<GameObject>) }))

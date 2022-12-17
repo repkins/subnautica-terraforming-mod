@@ -31,25 +31,14 @@ namespace Terraforming.WorldStreaming
 
             if (octreeData != null)
             {
-#if BelowZero
                 binaryWriter.Write(octreeData.ToArray());
-#else
-                binaryWriter.Write(octreeData.Array, octreeData.Offset, octreeDataLength);
-#endif
             }
         }
 
-#if BelowZero
         public static NativeArray<byte> GetData(this Octree octree)
         {
             return octree.data;
         }
-#else
-        public static LinearArrayHeap<byte>.Alloc GetData(this Octree octree)
-        {
-            return octree.data;
-        }
-#endif
 
         public static Int3 GetId(this Octree octree)
         {
@@ -88,21 +77,13 @@ namespace Terraforming.WorldStreaming
             octreeData[num + 3] = Convert.ToByte(firstChildId >> 8);
         }
 
-#if BelowZero
         public static void Set(this Octree octree, VoxelandData.OctNode root, SplitNativeArrayPool<byte> allocator)
-#else
-        public static void Set(this Octree octree, VoxelandData.OctNode root, LinearArrayHeap<byte> allocator)
-#endif
         {
             int num = root.CountNodes() * 4;
 
             octree.Clear(allocator);
 
-#if BelowZero
             var octreeData = allocator.Get(num);
-#else
-            var octreeData = allocator.Allocate(num);
-#endif
             octree.data = octreeData;
 
             ushort num2 = 1;
