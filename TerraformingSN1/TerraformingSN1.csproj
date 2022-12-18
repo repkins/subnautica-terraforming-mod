@@ -108,9 +108,7 @@
       <LastGenOutput>Texts.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Shims\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="..\TerraformingShared\TerraformingShared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
