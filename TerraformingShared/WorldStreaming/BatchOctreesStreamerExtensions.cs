@@ -10,9 +10,11 @@ namespace Terraforming.WorldStreaming
 {
     static class BatchOctreesStreamerExtensions
     {
+        public static readonly string CompiledOctreesDirName = "CompiledOctreesCache";
+
         public static string GetTmpPath(this BatchOctreesStreamer batchOctreesStreamer, Int3 batchId)
         {
-            var tmpPathPrefix = Path.Combine(LargeWorldStreamer.main.tmpPathPrefix, "CompiledOctreesCache");
+            var tmpPathPrefix = Path.Combine(LargeWorldStreamer.main.tmpPathPrefix, CompiledOctreesDirName);
 
             if (!Directory.Exists(tmpPathPrefix))
             {

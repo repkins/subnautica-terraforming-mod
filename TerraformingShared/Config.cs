@@ -29,7 +29,7 @@ namespace Terraforming
         public bool destroyLargerObstaclesOnConstruction = DefaultConfig.destroyLargerObstaclesOnConstruction;
 
         private static string assemblyName = Assembly.GetCallingAssembly().GetName().Name;
-        private static string configPath = Environment.CurrentDirectory + @"\QMods\" + assemblyName + @"\config.json";
+        private static string configPath = Environment.CurrentDirectory + @"\BepInEx\plugins\" + assemblyName + @"\config.json";
 
         public static Config Instance { get; private set; } = new Config();
 
