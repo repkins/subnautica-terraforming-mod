@@ -1,9 +1,9 @@
 ﻿using HarmonyLib;
-using Newtonsoft.Json.Bson;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Terraforming;
@@ -15,6 +15,60 @@ namespace TerraformingShared.SaveLoad
     [HarmonyPatch(typeof(UserStoragePC))]
     static class UserStoragePCPatches
     {
+        [HarmonyPatch(nameof(UserStoragePC.UpgradeSaveData))]
+        [HarmonyTranspiler]
+        static IEnumerable<CodeInstruction> RemoveDeletingOctrees(IEnumerable<CodeInstruction> instructions, ILGenerator generator, MethodBase originalMethod)
+        {
+            var codeMatcherCursor = new CodeMatcher(instructions);
+            
+            Action<CodeMatcher, ILGenerator>[] patchers =
+            {
+                AssignEmptyArrayToOctreesLocal
+            };
+
+            try
+            {
+                foreach (var patcher in patchers)
+                {
+                    patcher.Invoke(codeMatcherCursor, generator);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.ToString());
+
+                codeMatcherCursor.ReportFailure(originalMethod, Logger.Error);
+
+                return instructions;
+            }
+
+            return codeMatcherCursor.InstructionEnumeration();
+        }
+
+        private static void AssignEmptyArrayToOctreesLocal(CodeMatcher codeCursor, ILGenerator generator)
+        {
+            List<Label> labels;
+
+            codeCursor.Start();
+            codeCursor.MatchForward(useEnd: false,
+                new CodeMatch(OpCodes.Ldarg_0),
+                new CodeMatch(OpCodes.Ldstr, "compiled-batch-*.optoctrees"),
+                new CodeMatch(OpCodes.Ldc_I4_1),
+                new CodeMatch(OpCodes.Call, AccessTools.Method(typeof(Directory), nameof(Directory.GetFiles), new[] { typeof(string), typeof(string), typeof(SearchOption) }))
+            );
+            codeCursor.ThrowIfInvalid("Could not find call to Directory.GetFiles with octrees search pattern");
+
+            labels = codeCursor.Instruction.ExtractLabels();
+
+            codeCursor.RemoveInstructions(4)
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UserStoragePCPatches), nameof(GetEmptyArray))).WithLabels(labels));
+        }
+
+        private static string[] GetEmptyArray()
+        {
+            return new string[] { };
+        }
+
         [HarmonyPatch(nameof(UserStoragePC.UpgradeSaveDataAsync))]
         [HarmonyPostfix]
         static void EnsureCompiledOctreesBackFromBackup(UserStoragePC __instance, string backupPath, ref UserStorageUtils.UpgradeOperation __result)
@@ -77,11 +131,11 @@ namespace TerraformingShared.SaveLoad
                         string newSaveCompiledOctreesPath = Path.Combine(saveSlotPath, compiledOctreesDirName);
                         UWE.Utils.CopyDirectory(backupSaveCompiledOctreesPath, newSaveCompiledOctreesPath);
 
-                        Logger.Info(string.Format("Compiled octrees restored from backup for save slot {0}.", saveFileName));
+                        Logger.Info(string.Format("Compiled octrees restored from backup for save {0}.", saveFileName));
                     }
                     catch (Exception ex)
                     {
-                        Logger.Warning(string.Format("Failed to restore octrees at save slot {0}: {1}", saveFileName, ex.Message));
+                        Logger.Warning(string.Format("Failed to restore octrees at save {0}: {1}", saveFileName, ex.Message));
                     }
                 }
                 else
