@@ -140,10 +140,11 @@ namespace TerraformingShared.SaveLoad
                 foreach (string saveSlotDir in Directory.GetDirectories(userStoragePC.savePath))
                 {
                     string saveFileName = Path.GetFileName(saveSlotDir);
+                    string saveCompiledOctreesPath = Path.Combine(saveSlotDir, compiledOctreesDirName);
                     string backupSaveCompiledOctreesPath = Path.Combine(backupPath, saveFileName, compiledOctreesDirName);
 
-                    // Restore save container if exists in backup.
-                    if (Directory.Exists(backupSaveCompiledOctreesPath))
+                    // Restore save slot if exists in backup and is empty in target save location
+                    if (Directory.Exists(backupSaveCompiledOctreesPath) && !Directory.EnumerateFiles(saveCompiledOctreesPath).Any())
                     {
                         saveContainersToRestore.Add(saveSlotDir);
                     }
