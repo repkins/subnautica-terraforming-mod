@@ -10,7 +10,8 @@ namespace Terraforming.WorldStreaming
 {
     static class BatchOctreesStreamerExtensions
     {
-        public static readonly string CompiledOctreesDirName = "CompiledOctreesCache";
+        public const string CompiledOctreesDirName = "CompiledOctreesCache";
+        public const string CompiledOctreesFileNamePrefix = "batch-compiled";
 
         public static string GetTmpPath(this BatchOctreesStreamer batchOctreesStreamer, Int3 batchId)
         {
@@ -21,7 +22,7 @@ namespace Terraforming.WorldStreaming
                 Directory.CreateDirectory(tmpPathPrefix);
             }
 
-            var fileName = $"compiled-batch-{batchId.x}-{batchId.y}-{batchId.z}.optoctrees";
+            var fileName = $"{CompiledOctreesFileNamePrefix}-{batchId.x}-{batchId.y}-{batchId.z}.optoctrees";
             var fullPath = Path.Combine(tmpPathPrefix, fileName);
 
             return fullPath;

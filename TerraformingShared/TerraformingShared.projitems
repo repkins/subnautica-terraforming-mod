@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)MainPatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\ErrorMessageExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\ErrorMessagePatches.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SaveLoad\SaveLoadExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SaveLoad\SaveLoadManagerPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SaveLoad\UserStoragePCPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\BuilderExtensions.cs" />
