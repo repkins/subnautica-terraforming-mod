@@ -94,43 +94,23 @@ namespace Terraforming.Configuration
             }
         }
 
-        [HarmonyPatch(typeof(uGUI_TabbedControlsPanel))]
-        [HarmonyPatch(nameof(uGUI_TabbedControlsPanel.SetVisibleTab))]
-        public static class SetVisibleTabPatch
-        {
-            [HarmonyPrefix]
-            public static void OnSwitchingFromModsTab_SaveTerraformingConfig(uGUI_TabbedControlsPanel __instance, int tabIndex)
-            {
-                if (nullableModsTabIndex.HasValue)
-                {
-                    var modsTabIndex = nullableModsTabIndex.Value;
-
-                    // If navigating from Mods tab...
-                    if (__instance.currentTab == modsTabIndex && tabIndex != modsTabIndex)
-                    {
-                        Config.Save();
-                    }
-                }
-            }
-        }
-
         [HarmonyPatch(typeof(uGUI_OptionsPanel))]
         [HarmonyPatch(nameof(uGUI_OptionsPanel.OnDisable))]
         public static class OnDisablePatch
         {
             [HarmonyPostfix]
-            public static void OnClosingOptionsPanelAtModsTab_SaveTerraformingConfig(uGUI_OptionsPanel __instance)
+            public static void SaveTerraformingConfig(uGUI_OptionsPanel __instance)
             {
                 if (nullableModsTabIndex.HasValue)
                 {
-                    var modsTabIndex = nullableModsTabIndex.Value;
-
-                    // If at Mods tab...
-                    if (__instance.currentTab == modsTabIndex)
-                    {
-                        Config.Save();
-                    }
+                    Config.Save();
                 }
+            }
+
+            [HarmonyPostfix]
+            public static void DeassignModsTabIndex()
+            {
+                nullableModsTabIndex = null;
             }
         }
     }
