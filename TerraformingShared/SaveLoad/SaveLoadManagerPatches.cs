@@ -36,7 +36,9 @@ namespace Terraforming.SaveLoad.SaveLoadManagerPatches
             }
             octreesStreamer.WriteBatchOctrees();
 
+#if !BelowZero
             WriteOctreesIndicationFile();
+#endif
 
             LargeWorldStreamer.main.frozen = false;
             saveLoadManager.isSaving = false;

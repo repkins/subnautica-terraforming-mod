@@ -11,7 +11,11 @@ namespace Terraforming.WorldStreaming
     static class BatchOctreesStreamerExtensions
     {
         public const string CompiledOctreesDirName = "CompiledOctreesCache";
+#if BelowZero
+        public const string CompiledOctreesFileNamePrefix = "compiled-batch";
+#else
         public const string CompiledOctreesFileNamePrefix = "batch-compiled";
+#endif
 
         public static string GetTmpPath(this BatchOctreesStreamer batchOctreesStreamer, Int3 batchId)
         {
