@@ -71,7 +71,7 @@ namespace Terraforming.WorldStreaming
 
                     if (rebuildingMessage != null)
                     {
-                        ErrorMessageExtensions.SetMessageTimeEnd(rebuildingMessage, Time.time);
+                        ErrorMessageExtensions.SetMessageTimeEnd(rebuildingMessage, PDA.time);
                         ErrorMessageExtensions.pendingMessageToRemove = rebuildingMessage;
                         rebuildingMessage = null;
                     }
@@ -81,7 +81,7 @@ namespace Terraforming.WorldStreaming
             {
                 var oldTimeEnd = ErrorMessageExtensions.GetMessageTimeEnd(rebuildingMessage);
                 var timeFadeOut = ErrorMessageExtensions.GetTimeFadeOut();
-                if (oldTimeEnd - timeFadeOut < Time.time)
+                if (oldTimeEnd - timeFadeOut < PDA.time)
                 {
                     rebuildingMessage = ErrorMessageExtensions.AddReturnMessage(rebuildingTerrainMsg);
                 }
