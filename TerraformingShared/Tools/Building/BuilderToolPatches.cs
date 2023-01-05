@@ -9,7 +9,7 @@ using System.Collections;
 using System.Linq;
 using Terraforming.Tools;
 
-namespace TerraformingShared.Tools
+namespace TerraformingShared.Tools.Building
 {
     [HarmonyPatch(typeof(BuilderTool))]
     public static class BuilderToolPatches

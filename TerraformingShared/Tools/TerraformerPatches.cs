@@ -34,13 +34,13 @@ namespace Terraforming.Tools.TerraformerPatches
             {
                 return false;
             }
-            if (__instance.GetUsingPlayer() == null)
+            if (__instance.usingPlayer == null)
             {
                 return false;
             }
 
             var hasActiveStrokes = __instance.activeStrokes.Count > 0;
-            var isAnyHandHeld = __instance.GetUsingPlayer().GetRightHandHeld() || __instance.GetUsingPlayer().GetLeftHandHeld();
+            var isAnyHandHeld = __instance.usingPlayer.GetRightHandHeld() || __instance.usingPlayer.GetLeftHandHeld();
             if (__instance.penDown && hasActiveStrokes && !isAnyHandHeld)
             {
                 __state = true;

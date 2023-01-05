@@ -17,7 +17,7 @@ namespace Terraforming.Tools.RepulsionCannonPatches
         {
             if (Config.Instance.terrainImpactWithRepulsionCannon && !ClipmapLevelExtensions.isMeshesRebuilding)
             {
-                var energyMixin = __instance.GetEnergyMixin();
+                var energyMixin = __instance.energyMixin;
                 if (energyMixin.charge > 0f)
                 {
 #if BelowZero

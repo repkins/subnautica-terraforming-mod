@@ -6,10 +6,10 @@ using System.Text;
 using Terraforming.WorldStreaming;
 using UnityEngine;
 
-namespace Terraforming.Tools.ConstructableBasePatches
+namespace Terraforming.Tools.Building.ConstructableBasePatches
 {
     [HarmonyPatch(typeof(ConstructableBase))]
-    [HarmonyPatch("SetState")]
+    [HarmonyPatch(nameof(ConstructableBase.SetState))]
     static class SetStatePatch
     {
         static void Prefix(ConstructableBase __instance, bool value)

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Terraforming
 {
-    [BepInPlugin("subnautica.repkins.terraforming", "Terraforming", "1.4.4.0")]
+    [BepInPlugin("subnautica.repkins.terraforming", "Terraforming", "1.5.0.0")]
     public class Plugin: BaseUnityPlugin
     {
         public void Awake()

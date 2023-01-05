@@ -7,9 +7,10 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using TerraformingShared.Tools;
+using TerraformingShared.Tools.Building;
 using UnityEngine;
 
-namespace Terraforming.Tools.BuilderPatches
+namespace Terraforming.Tools.Building.BuilderPatches
 {
     [HarmonyPatch(typeof(Builder))]
     [HarmonyPatch(nameof(Builder.CanDestroyObject))]
