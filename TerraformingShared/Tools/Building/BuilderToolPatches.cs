@@ -128,7 +128,7 @@ namespace TerraformingShared.Tools.Building
                         foreach (var obstacle in obstacleList)
                         {
                             if ((Config.Instance.destroyLargerObstaclesOnConstruction || !BuilderExtensions.IsContructionObstacle(obstacle))
-                                && obstacle.GetComponent<BaseCell>() == null && Builder.CanDestroyObject(obstacle))
+                                && !obstacle.GetComponent<BaseCell>() && Builder.CanDestroyObject(obstacle))
                             {
                                 obstacle.GetComponentsInChildren(rendererList);
 
@@ -144,7 +144,7 @@ namespace TerraformingShared.Tools.Building
 
         static void RestoreHighlightedObstacles()
         {
-            obstacleRendererList.Where(renderer => renderer != null).ForEach(renderer => renderer.fadeAmount = 1f);
+            obstacleRendererList.Where(renderer => !renderer).ForEach(renderer => renderer.fadeAmount = 1f);
             obstacleRendererList.Clear();
         }
     }
