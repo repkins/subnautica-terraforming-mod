@@ -137,15 +137,4 @@ namespace Terraforming.Tools.Building.BuilderPatches
             BuilderExtensions.ClearConstructionObstacles(results);
         }
     }
-
-    //[HarmonyPatch(typeof(Builder))]
-    //[HarmonyPatch(nameof(Builder.GetOverlappedColliders))]
-    //[HarmonyPatch(new[] { typeof(Vector3), typeof(Quaternion), typeof(Vector3), typeof(int), typeof(QueryTriggerInteraction), typeof(List<Collider>) })]
-    static class GetOverlappedCollidersPatch
-    {
-        static void Postfix(Vector3 position, Quaternion rotation, Vector3 extents, List<Collider> results)
-        {
-
-        }
-    }
 }

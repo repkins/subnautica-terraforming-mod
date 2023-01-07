@@ -144,7 +144,7 @@ namespace TerraformingShared.Tools.Building
 
         static void RestoreHighlightedObstacles()
         {
-            obstacleRendererList.Where(renderer => !renderer).ForEach(renderer => renderer.fadeAmount = 1f);
+            obstacleRendererList.Where(renderer => renderer).ForEach(renderer => renderer.fadeAmount = 1f);
             obstacleRendererList.Clear();
         }
     }

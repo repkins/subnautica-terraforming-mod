@@ -15,15 +15,14 @@ namespace Terraforming.Tools.Building
     {
         [HarmonyPostfix]
         [HarmonyPatch(nameof(EntityCell.AwakeAsync))]
-        public static void AddDummyColliders(EntityCell __instance, ref IEnumerator __result)
-        {
-            __result = AddDummyCollidersAsync(__instance, __result);
-        }
-
-        private static IEnumerator AddDummyCollidersAsync(EntityCell entityCell, IEnumerator originalEnumerator)
+        public static IEnumerator AddColliders(IEnumerator originalEnumerator, EntityCell __instance)
         {
             yield return originalEnumerator;
+            yield return AddCollidersAsync(__instance);
+        }
 
+        private static IEnumerator AddCollidersAsync(EntityCell entityCell)
+        {
             if (entityCell.liveRoot)
             {
                 var stopwatch = new Stopwatch();
@@ -46,23 +45,16 @@ namespace Terraforming.Tools.Building
                     if (collider)
                     {
                         collider.isTrigger = true;
-                        collider.size = Vector3.zero;
+                        collider.size = rootObj.GetComponentInChildren<Renderer>().bounds.size;
                     }
 
-                    //var debugBox = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    //debugBox.transform.position = collidingBox.transform.position;
-                    //debugBox.transform.localScale *= 0.25f;
-                    //UnityEngine.Object.Destroy(debugBox.GetComponent<Collider>());
-
-                    Logger.Info($"Adding collider object for {rootObj} at {rootObj.transform.position}");
+                    Logger.Debug($"Adding collider object for {rootObj} at {rootObj.transform.position}");
 
                     yield return null;
-                    //PrintStruct(rootObj.transform);
                 }
 
                 stopwatch.Stop();
-
-                Logger.Debug($"AddDummyColliders for {entityCell} took {stopwatch.Elapsed.TotalMilliseconds} ms");
+                Logger.Debug($"AddCollidersAsync for {entityCell} took {stopwatch.Elapsed.TotalMilliseconds} ms");
             }
         }
 
