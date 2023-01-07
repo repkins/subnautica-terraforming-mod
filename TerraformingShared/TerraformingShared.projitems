@@ -22,6 +22,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Tools\Building\BuilderPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\Building\BuilderToolPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\Building\ConstructableBasePatches.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tools\Building\EntityCellPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\HandReticleExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\RepulsionCannonPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\TerraformerExtensions.cs" />
@@ -37,8 +38,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\ClipmapLevelExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\ClipmapStreamerExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorldStreaming\OctreeExtensions.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Tools\Building\" />
   </ItemGroup>
 </Project>
