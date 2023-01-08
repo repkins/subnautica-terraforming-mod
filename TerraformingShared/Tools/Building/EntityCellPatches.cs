@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Terraforming;
+using TerraformingShared.Tools.Building;
 using UnityEngine;
 
 namespace Terraforming.Tools.Building
@@ -36,7 +37,7 @@ namespace Terraforming.Tools.Building
 
                 foreach (var rootObj in rootObjs)
                 {
-                    var collidingBox = new GameObject("TerraformingHelper");
+                    var collidingBox = new GameObject(EntityCellExtensions.PassThroughColliderName);
                     collidingBox.transform.parent = rootObj.transform;
                     collidingBox.transform.localPosition = Vector3.zero;
                     collidingBox.layer = LayerID.Useable;

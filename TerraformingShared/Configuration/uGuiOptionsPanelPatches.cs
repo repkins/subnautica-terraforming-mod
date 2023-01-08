@@ -83,12 +83,17 @@ namespace Terraforming.Configuration
                         new UnityAction<float>(value => Config.Instance.destroyableObstacleTransparency = value),
                         SliderLabelMode.Percent,
                         "000",
-                        $"Allows to adjust transparency amount of destroyable construction obstacles. Transparency serves as warning to be destroyed if destroying obstacles enabled. Defaults to 10."
+                        $"Allows to adjust transparency amount of destruction-enabled construction obstacles after base module placement. Defaults to 10."
                     );
 
                     __instance.AddToggleOption(modsTabIndex, Texts.DestroyObstacles, Config.Instance.destroyLargerObstaclesOnConstruction,
                         new UnityAction<bool>(value => Config.Instance.destroyLargerObstaclesOnConstruction = value),
-                        $"Highlights destroyable overlapping certain objects after placing a base module for construction. Destroys them when construction of module finishes. Disabled by default."
+                        $"Enables ability to destroy rogue construction obstacles. Disabled by default."
+                    );
+
+                    __instance.AddToggleOption(modsTabIndex, Texts.DestroyPassthroughObstacles, Config.Instance.destroyPassthroughObstacles,
+                        new UnityAction<bool>(value => Config.Instance.destroyPassthroughObstacles = value),
+                        $"Enables ability to destroy pass-through construction obstacles. Disabled by default."
                     );
                 }
             }

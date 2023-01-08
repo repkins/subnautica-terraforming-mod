@@ -127,7 +127,7 @@ namespace TerraformingShared.Tools.Building
 
                         foreach (var obstacle in obstacleList)
                         {
-                            if ((Config.Instance.destroyLargerObstaclesOnConstruction || !BuilderExtensions.IsContructionObstacle(obstacle))
+                            if ((Config.Instance.destroyLargerObstaclesOnConstruction || !BuilderExtensions.IsRogueContructionObstacle(obstacle))
                                 && !obstacle.GetComponent<BaseCell>() && Builder.CanDestroyObject(obstacle))
                             {
                                 obstacle.GetComponentsInChildren(rendererList);

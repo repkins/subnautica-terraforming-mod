@@ -17,6 +17,7 @@ namespace Terraforming
         public static readonly float spaceBetweenTerrainHabitantModule = 1.0f;
         public static readonly float destroyableObstacleTransparency = .1f;
         public static readonly bool destroyLargerObstaclesOnConstruction = false;
+        public static readonly bool destroyPassthroughObstacles = false;
     }
 
     class Config
@@ -27,6 +28,7 @@ namespace Terraforming
         public float spaceBetweenTerrainHabitantModule = DefaultConfig.spaceBetweenTerrainHabitantModule;
         public float destroyableObstacleTransparency = DefaultConfig.destroyableObstacleTransparency;
         public bool destroyLargerObstaclesOnConstruction = DefaultConfig.destroyLargerObstaclesOnConstruction;
+        public bool destroyPassthroughObstacles = DefaultConfig.destroyPassthroughObstacles;
 
         private static string configPath = Path.Combine(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location), "config.json");
 

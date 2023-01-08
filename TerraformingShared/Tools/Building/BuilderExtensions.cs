@@ -9,10 +9,10 @@ namespace TerraformingShared.Tools.Building
     {
         public static void ClearConstructionObstacles(List<GameObject> results)
         {
-            results.RemoveAll(IsContructionObstacle);
+            results.RemoveAll(IsRogueContructionObstacle);
         }
 
-        public static bool IsContructionObstacle(GameObject go)
+        public static bool IsRogueContructionObstacle(GameObject go)
         {
             if (IsObstacleOf<ConstructionObstacle>(go))
             {

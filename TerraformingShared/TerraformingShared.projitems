@@ -22,6 +22,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Tools\Building\BuilderPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\Building\BuilderToolPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\Building\ConstructableBasePatches.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tools\Building\EntityCellExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\Building\EntityCellPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\HandReticleExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tools\RepulsionCannonPatches.cs" />

@@ -70,11 +70,20 @@ namespace Terraforming.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Destroy obstacles.
+        ///   Looks up a localized string similar to Destroy rogue obstacles.
         /// </summary>
         internal static string DestroyObstacles {
             get {
                 return ResourceManager.GetString("DestroyObstacles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Destroy pass-through obstacles.
+        /// </summary>
+        internal static string DestroyPassthroughObstacles {
+            get {
+                return ResourceManager.GetString("DestroyPassthroughObstacles", resourceCulture);
             }
         }
         

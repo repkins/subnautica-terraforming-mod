@@ -121,7 +121,10 @@
     <value>Obstacle transparency</value>
   </data>
   <data name="DestroyObstacles" xml:space="preserve">
-    <value>Destroy obstacles</value>
+    <value>Destroy rogue obstacles</value>
+  </data>
+  <data name="DestroyPassthroughObstacles" xml:space="preserve">
+    <value>Destroy pass-through obstacles</value>
   </data>
   <data name="HabitatModulesBurying" xml:space="preserve">
     <value>Habitant modules burying</value>

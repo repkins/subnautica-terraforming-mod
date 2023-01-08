@@ -37,16 +37,9 @@ namespace Terraforming.Tools.Building.BuilderPatches
                         yield return new CodeInstruction(OpCodes.Brfalse_S, onDisabledDestroyingObstaclesLabel);
 
                         var onConstructionObstacleLabel = generator.DefineLabel();
-                        yield return new CodeInstruction(OpCodes.Ldarg_0);                                  // Load passed "go" object to get ConstructionObstacle component.
-                        yield return new CodeInstruction(OpCodes.Callvirt, GetComponentMethod.MakeGenericMethod(typeof(ConstructionObstacle)));
-                        yield return new CodeInstruction(OpCodes.Brtrue_S, onConstructionObstacleLabel);    // Redirect if there is ConstructionObstacle component.
-
-#if !BelowZero
-                        var onImmuneToLabel = generator.DefineLabel();
                         yield return new CodeInstruction(OpCodes.Ldarg_0);
-                        yield return new CodeInstruction(OpCodes.Callvirt, GetComponentMethod.MakeGenericMethod(typeof(ImmuneToPropulsioncannon)));
-                        yield return new CodeInstruction(OpCodes.Brtrue_S, onImmuneToLabel);
-#endif
+                        yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(BuilderExtensions), nameof(BuilderExtensions.IsRogueContructionObstacle), new Type[] { typeof(GameObject) }));
+                        yield return new CodeInstruction(OpCodes.Brtrue_S, onConstructionObstacleLabel);
 
                         if (instructionsEnumerator.MoveNext())
                         {
@@ -58,11 +51,7 @@ namespace Terraforming.Tools.Building.BuilderPatches
                             yield return instructionsEnumerator.Current;
                         }
 
-#if BelowZero
                         yield return instructionsEnumerator.Current.WithLabels(onConstructionObstacleLabel);
-#else
-                        yield return instructionsEnumerator.Current.WithLabels(onConstructionObstacleLabel, onImmuneToLabel);
-#endif
                     }
                 }
                 else
@@ -70,6 +59,11 @@ namespace Terraforming.Tools.Building.BuilderPatches
                     yield return instructionsEnumerator.Current;
                 }
             }
+        }
+
+        static bool Postfix(bool canDestroy, GameObject go)
+        {
+            return canDestroy && (Config.Instance.destroyPassthroughObstacles || !go.transform.Find(EntityCellExtensions.PassThroughColliderName));
         }
     }
 
