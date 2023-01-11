@@ -29,6 +29,9 @@ namespace Terraforming.Tools.Building
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
 
+                var collidersOfCell = BuilderExtensions.passThroughObjectCollidersPerCell.GetOrAddNew((entityCell.level, entityCell.CellId));
+                collidersOfCell.Clear();
+
                 var rootObjs = entityCell.liveRoot.GetComponentsInChildren<Renderer>()
                     .Select(renderer => renderer.GetComponentInParent<PrefabIdentifier>())
                     .Where(prefabIdentifier => prefabIdentifier)
@@ -47,7 +50,10 @@ namespace Terraforming.Tools.Building
                     {
                         collider.isTrigger = true;
                         collider.size = rootObj.GetComponentInChildren<Renderer>().bounds.size;
+                        collider.enabled = false;
                     }
+
+                    collidersOfCell.Add(collider);
 
                     Logger.Debug($"Adding collider object for {rootObj} at {rootObj.transform.position}");
 
@@ -57,6 +63,21 @@ namespace Terraforming.Tools.Building
                 stopwatch.Stop();
                 Logger.Debug($"AddCollidersAsync for {entityCell} took {stopwatch.Elapsed.TotalMilliseconds} ms");
             }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(EntityCell.SleepAsync))]
+        public static IEnumerator ClearColliders(IEnumerator originalEnumerator, EntityCell __instance)
+        {
+            yield return originalEnumerator;
+            yield return ClearCollidersAsync(__instance);
+        }
+
+        private static IEnumerator ClearCollidersAsync(EntityCell entityCell)
+        {
+            BuilderExtensions.passThroughObjectCollidersPerCell[(entityCell.level, entityCell.CellId)].Clear();
+
+            yield break;
         }
 
         private static void PrintStruct(Transform transform, int level = 0)

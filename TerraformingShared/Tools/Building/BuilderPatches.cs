@@ -131,4 +131,32 @@ namespace Terraforming.Tools.Building.BuilderPatches
             BuilderExtensions.ClearConstructionObstacles(results);
         }
     }
+
+
+    [HarmonyPatch(typeof(Builder))]
+    [HarmonyPatch(nameof(Builder.GetOverlappedColliders))]
+    static class GetOverlappedCollidersPatch
+    {
+        static void Prefix()
+        {
+            if (Config.Instance.destroyPassthroughObstacles)
+            {
+                BuilderExtensions.passThroughObjectCollidersPerCell.Values
+                    .SelectMany(list => list)
+                    .Where(collider => collider)
+                    .ForEach(collider => collider.enabled = true);
+            }
+        }
+
+        static void Postfix()
+        {
+            if (Config.Instance.destroyPassthroughObstacles)
+            {
+                BuilderExtensions.passThroughObjectCollidersPerCell.Values
+                    .SelectMany(list => list)
+                    .Where(collider => collider)
+                    .ForEach(collider => collider.enabled = false);
+            }
+        }
+    }
 }
