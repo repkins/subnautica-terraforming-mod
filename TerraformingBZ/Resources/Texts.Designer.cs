@@ -79,6 +79,15 @@ namespace Terraforming.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Destroy pass-through obstacles.
+        /// </summary>
+        internal static string DestroyPassthroughObstacles {
+            get {
+                return ResourceManager.GetString("DestroyPassthroughObstacles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Habitant modules burying.
         /// </summary>
         internal static string HabitatModulesBurying {
