@@ -20,12 +20,12 @@ namespace TerraformingShared.Tools.Building
             {
                 return true;
             }
-#if !BelowZero
+
             if (IsObstacleOf<ImmuneToPropulsioncannon>(go))
             {
                 return true;
             }
-#endif
+
             return false;
         }
 
