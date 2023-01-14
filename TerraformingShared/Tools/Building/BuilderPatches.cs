@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -8,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TerraformingShared.Tools;
 using TerraformingShared.Tools.Building;
+using TMPro;
 using UnityEngine;
 
 namespace Terraforming.Tools.Building.BuilderPatches
@@ -135,16 +137,28 @@ namespace Terraforming.Tools.Building.BuilderPatches
 
     [HarmonyPatch(typeof(Builder))]
     [HarmonyPatch(nameof(Builder.GetOverlappedColliders))]
+    [HarmonyPatch(new[] { typeof(Vector3), typeof(Quaternion), typeof(Vector3), typeof(int), typeof(QueryTriggerInteraction), typeof(List<Collider>) })]
     static class GetOverlappedCollidersPatch
     {
+        static IEnumerable<Collider> ValidPassThroughColliders = 
+            BuilderExtensions.PassThroughObjectCollidersPerCell.Values
+                .SelectMany(list => list)
+                .Where(collider => collider);
+
+        static Stopwatch watch = new Stopwatch();
+
         static void Prefix()
         {
             if (Config.Instance.destroyPassthroughObstacles)
             {
-                BuilderExtensions.passThroughObjectCollidersPerCell.Values
-                    .SelectMany(list => list)
-                    .Where(collider => collider)
-                    .ForEach(collider => collider.enabled = true);
+                watch.Start();
+
+                ValidPassThroughColliders.ForEach(collider => collider.enabled = true);
+
+                watch.Stop();
+                Logger.Debug($"Enabled colliders for {ValidPassThroughColliders.Count()} pass-through objects in {watch.Elapsed.TotalMilliseconds}.");
+
+                watch.Reset();
             }
         }
 
@@ -152,10 +166,9 @@ namespace Terraforming.Tools.Building.BuilderPatches
         {
             if (Config.Instance.destroyPassthroughObstacles)
             {
-                BuilderExtensions.passThroughObjectCollidersPerCell.Values
-                    .SelectMany(list => list)
-                    .Where(collider => collider)
-                    .ForEach(collider => collider.enabled = false);
+                ValidPassThroughColliders.ForEach(collider => collider.enabled = false);
+
+                Logger.Debug($"Disabled colliders for {ValidPassThroughColliders.Count()} pass-through objects.");
             }
         }
     }

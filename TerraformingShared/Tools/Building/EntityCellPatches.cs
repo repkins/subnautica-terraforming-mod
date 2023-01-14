@@ -14,6 +14,8 @@ namespace Terraforming.Tools.Building
     [HarmonyPatch(typeof(EntityCell))]
     static class EntityCellPatches
     {
+        static Stopwatch stopwatch = new Stopwatch();
+
         [HarmonyPostfix]
         [HarmonyPatch(nameof(EntityCell.AwakeAsync))]
         public static IEnumerator AddColliders(IEnumerator originalEnumerator, EntityCell __instance)
@@ -26,10 +28,9 @@ namespace Terraforming.Tools.Building
         {
             if (entityCell.liveRoot)
             {
-                var stopwatch = new Stopwatch();
                 stopwatch.Start();
 
-                var collidersOfCell = BuilderExtensions.passThroughObjectCollidersPerCell.GetOrAddNew((entityCell.level, entityCell.CellId));
+                var collidersOfCell = BuilderExtensions.PassThroughObjectCollidersPerCell.GetOrAddNew(entityCell.GetTuple());
                 collidersOfCell.Clear();
 
                 var rootObjs = entityCell.liveRoot.GetComponentsInChildren<Renderer>()
@@ -55,13 +56,15 @@ namespace Terraforming.Tools.Building
 
                     collidersOfCell.Add(collider);
 
-                    Logger.Debug($"Adding collider object for {rootObj} at {rootObj.transform.position}");
+                    Logger.Info($"Adding collider object for {rootObj} at {rootObj.transform.position}");
 
                     yield return null;
                 }
 
                 stopwatch.Stop();
-                Logger.Debug($"AddCollidersAsync for {entityCell} took {stopwatch.Elapsed.TotalMilliseconds} ms");
+                Logger.Debug($"Adding colliders of {entityCell} took {stopwatch.Elapsed.TotalMilliseconds} ms");
+
+                stopwatch.Reset();
             }
         }
 
@@ -75,7 +78,15 @@ namespace Terraforming.Tools.Building
 
         private static IEnumerator ClearCollidersAsync(EntityCell entityCell)
         {
-            BuilderExtensions.passThroughObjectCollidersPerCell[(entityCell.level, entityCell.CellId)].Clear();
+            if (BuilderExtensions.PassThroughObjectCollidersPerCell.TryGetValue(entityCell.GetTuple(), out var collidersInCell))
+            {
+                if (collidersInCell.Count > 0)
+                {
+                    Logger.Debug($"Clearing {collidersInCell.Count} pass-through objects of {entityCell}.");
+
+                    collidersInCell.Clear();
+                }
+            }
 
             yield break;
         }

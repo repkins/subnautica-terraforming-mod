@@ -7,7 +7,7 @@ namespace TerraformingShared.Tools.Building
 {
     internal static class BuilderExtensions
     {
-        public static readonly Dictionary<(int, Int3), List<Collider>> passThroughObjectCollidersPerCell = new Dictionary<(int, Int3), List<Collider>>();
+        public static readonly Dictionary<(int, Int3, Int3), List<Collider>> PassThroughObjectCollidersPerCell = new Dictionary<(int, Int3, Int3), List<Collider>>();
 
         public static void ClearConstructionObstacles(List<GameObject> results)
         {
