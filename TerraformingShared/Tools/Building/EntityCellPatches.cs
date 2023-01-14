@@ -56,7 +56,7 @@ namespace Terraforming.Tools.Building
 
                     collidersOfCell.Add(collider);
 
-                    Logger.Info($"Adding collider object for {rootObj} at {rootObj.transform.position}");
+                    Logger.Info($"Adding collider object for pass-through {rootObj} at {rootObj.transform.position}");
 
                     yield return null;
                 }
