@@ -16,8 +16,8 @@ Terraforming Ability mod for Subnautica and it's expansion Below Zero - underwat
 - **"dig #"** console command also now actually works which allows to perform **spherical removal** of terrain at player location as a sphere center within provided radius as a first parameter of command, ex. "dig 5".
 
 ## Installation:
-1. Install **QModsManager**.
-2. Put mod folder into "QMods" folder of game directory.
+1. Install **BepInEx**. Run game then exit.
+2. Put mod folder into "BepInEx/plugins" folder of game directory.
 
 ## Configuration:
 There is new section added in **"Mods" tab** of **in-game options** which allows to change the following:
