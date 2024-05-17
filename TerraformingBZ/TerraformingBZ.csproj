@@ -28,7 +28,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>E:\Program Files %28x86%29\Steam\steamapps\common\SubnauticaZero\QMods\TerraformingBZ\</OutputPath>
+    <OutputPath>E:\Program Files %28x86%29\Steam\steamapps\common\SubnauticaZero\BepInEx\plugins\TerraformingBZ\</OutputPath>
     <DefineConstants>TRACE;BelowZero</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -46,6 +46,10 @@
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>E:\Program Files (x86)\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\publicized_assemblies\Assembly-CSharp-firstpass_publicized.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>E:\Program Files (x86)\Steam\steamapps\common\SubnauticaZero\BepInEx\core\BepInEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
@@ -85,6 +89,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Identifiers.Designer.cs">
       <DependentUpon>Identifiers.resx</DependentUpon>
@@ -96,11 +101,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="mod.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Identifiers.resx">
