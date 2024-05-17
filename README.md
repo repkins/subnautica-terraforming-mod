@@ -3,7 +3,7 @@ Terraforming Ability mod for Subnautica and it's expansion Below Zero - underwat
 
 **[Download for Subnautica v1.4.4](https://github.com/repkins/subnautica-terraforming-mod/releases/download/v1.4.4/Terraforming_v144.zip)**
 
-**[Download for Below Zero v1.4.4](https://github.com/repkins/subnautica-terraforming-mod/releases/download/v1.4.4/TerraformingBZ_v144.zip)**
+**[Download for Below Zero v1.4.4.1](https://github.com/repkins/subnautica-terraforming-mod/releases/download/v1.4.4.1/TerraformingBZ_v1441.zip)**
 
 ## Features:
 - **Saves/loads** modified terrain to/from saves. Saves only those terrain areas which was modified, reducing save size bloating, into new "CompiledOctreesCache" folder in your save folders.
