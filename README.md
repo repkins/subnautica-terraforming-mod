@@ -21,4 +21,4 @@ Class libraries are meant to be loaded by mod loaders:
 
 ## How-To Use
 
-[Mod Page](https://github.com/repkins/subnautica-terraforming-mod/wiki/Mod-page)
+[Mod page](https://github.com/repkins/subnautica-terraforming-mod/wiki/Mod-page)
