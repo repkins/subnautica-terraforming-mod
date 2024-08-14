@@ -7,7 +7,7 @@ Modification features voxel-based **terrain editing game mechanic** which was pr
 
 Terrain editing can be performed by various gameplay tools, such as:
  - Terraformer (which is also was cut);
- - Builder (used by player to build modular habitats);
+ - Builder (used by player to build modular habitats).
 
 This mod adds option for habitat builders to remove some overlapping terrain (and structures) to fit modules to their desired locations. Every module have construction bounding boxes used for checking obstructions such as terrain, and mod uses them for removal of terrain when necessary.
 
