@@ -18,3 +18,7 @@ Solution contains 3 projects: 1 containing shared logic for both games and 2 is 
 Class libraries are meant to be loaded by mod loaders: 
  - **BepInEx** (general mod loader supporting almost all Unity versions of shipped games running on)
  - or **QModManager** (Subnautica specific, _obsolete_).
+
+## How-To Use
+
+[Mod Page](https://github.com/repkins/subnautica-terraforming-mod/wiki/Mod-page)
