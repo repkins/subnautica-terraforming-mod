@@ -19,6 +19,6 @@ Class libraries are meant to be loaded by mod loaders:
  - **BepInEx** (general mod loader supporting almost all Unity versions of shipped games running on)
  - or **QModManager** (Subnautica specific, _obsolete_).
 
-## How-To Use
+## How-to use
 
 [Mod page](https://github.com/repkins/subnautica-terraforming-mod/wiki/Mod-page)
