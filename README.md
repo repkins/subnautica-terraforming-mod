@@ -11,6 +11,8 @@ Terrain editing can be performed by various gameplay tools, such as:
 
 This mod adds option for habitat builders to remove some overlapping terrain (and structures) to fit modules to their desired locations. Every module have construction bounding boxes used for checking obstructions such as terrain, and mod uses them for removal of terrain when necessary.
 
+[Demo](https://www.youtube.com/watch?v=65ZKYW6t7O4)
+
 ## Solution structure
 
 Solution contains 3 projects: 1 containing shared logic for both games and 2 is class library projects used for targeting each game separately.
