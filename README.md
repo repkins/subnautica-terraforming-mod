@@ -15,7 +15,7 @@ This mod adds option for habitat builders to remove some overlapping terrain (an
 
 ## Solution structure
 
-Solution contains 3 projects: 1 containing shared logic for both games and 2 is class library projects used for targeting each game separately.
+Solution contains 3 projects: 1 containing shared logic for both games and 2 is class library projects targeting each game separately.
 
 Class libraries are meant to be loaded by mod loaders: 
  - **BepInEx** (general mod loader supporting almost all Unity versions of shipped games running on)
