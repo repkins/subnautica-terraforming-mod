@@ -40,7 +40,7 @@ namespace Terraforming.Tools.TerraformerPatches
             }
 
             var hasActiveStrokes = __instance.activeStrokes.Count > 0;
-            var isAnyHandHeld = __instance.usingPlayer.GetRightHandHeld() || __instance.usingPlayer.GetLeftHandHeld();
+            var isAnyHandHeld = GameInput.GetButtonHeld(GameInput.Button.RightHand) || GameInput.GetButtonHeld(GameInput.Button.LeftHand);
             if (__instance.penDown && hasActiveStrokes && !isAnyHandHeld)
             {
                 __state = true;

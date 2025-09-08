@@ -10,7 +10,7 @@ using WorldStreaming;
 namespace Terraforming.Tools.RepulsionCannonPatches
 {
     [HarmonyPatch(typeof(RepulsionCannon))]
-    [HarmonyPatch("OnToolUseAnim")]
+    [HarmonyPatch(nameof(RepulsionCannon.OnToolUseAnim))]
     static class OnToolUseAnimPatch
     {
         static void Prefix(RepulsionCannon __instance)
@@ -20,7 +20,6 @@ namespace Terraforming.Tools.RepulsionCannonPatches
                 var energyMixin = __instance.energyMixin;
                 if (energyMixin.charge > 0f)
                 {
-#if BelowZero
                     GameObject closestObject = null;
                     var closestPoint = default(Vector3);
 
@@ -31,12 +30,6 @@ namespace Terraforming.Tools.RepulsionCannonPatches
                             Utils.Terraform(closestPoint, 1f);
                         }
                     }
-#else
-                    if (UWE.Utils.TraceHitComponentNormal<ClipmapChunk>(Player.main.gameObject, 35f, 1f, out _, out var position2))
-                    {
-                        Utils.Terraform(position2, 1f);
-                    }
-#endif
                 }
             }
         }

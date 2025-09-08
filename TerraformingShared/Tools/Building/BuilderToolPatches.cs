@@ -79,7 +79,13 @@ namespace TerraformingShared.Tools.Building
 
                 var storedDestroyingEnabled = storedEnabledDestroyingObstacles;
 
-                var obstaclesUseText = string.Format("{0} (Hold {1})", storedDestroyingEnabled ? disableText : enableText, uGUI.FormatButton(GameInput.Button.AltTool));
+#if BelowZero
+                var altToolButton = uGUI.FormatButton(GameInput.Button.AltTool);
+#else
+                var altToolButton = GameInput.FormatButton(GameInput.Button.AltTool);
+#endif
+
+                var obstaclesUseText = string.Format("{0} (Hold {1})", storedDestroyingEnabled ? disableText : enableText, altToolButton);
 
                 var handSubscriptText = HandReticle.main.GetHandSubscript();
                 handSubscriptText = handSubscriptText.Insert(handSubscriptText.IndexOf(Environment.NewLine), string.Format(", {0}", obstaclesUseText));
